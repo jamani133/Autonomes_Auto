@@ -11,6 +11,8 @@ int FWD[]  = { 1, 1, 1, 1};
 int SIDE[] = {-1, 1, 1,-1};
 int ROT[]  = { 1,-1, 1,-1};
 
+boolean stopped = true;
+
 int wheelSpeeds[] = {0,0,0,0};
 
 void configurePins(){
@@ -30,21 +32,42 @@ void setup(){
     
     configurePins();
     Wire.begin(2);
+
+    calculateStepSpeeds(30,0,0);
+    digitalWrite(MOTOR_ENABLE,stopped);
 }
 void loop(){
+
     if(Wire.available()){
-      
+        int vel = Wire.read();
+        int ang = Wire.read();
+        int rot = Wire.read();
+        calculateStepSpeeds(vel,ang,rot);
+        digitalWrite(MOTOR_ENABLE,stopped);
     }
-    calculateStepSpeeds();
+    if(!stopped){
+        stepSteppers();
+    }
+    
+    //5V
+    //GND
+    //SDA
+    //SCL
+    //VBat
+    
 }
 
 void calculateStepSpeeds(int velocity,int angle,int rotationVel){
-  int fwdComp  = cos(angle) * velocity;
-  int sideComp = sin(anlge) * velocity;
-  int rotComp  = rotationalVel;
-
+  float Fangle = map(angle,0,255,-1,1);
+  int fwdComp  = cos(Fangle) * velocity;
+  int sideComp = sin(Fangle) * velocity;
+  int rotComp  = rotationVel;
+  stopped = true;
   for(int i = 0; i < 4;i++){
     wheelSpeeds[i] = (FWD[i]*fwdComp) + (SIDE[i]*fwdComp) + (ROT[i]*fwdComp);
+    if(wheelSpeeds[i] != 0){
+        stopped = false;
+    }
   }
 }
 
@@ -69,11 +92,15 @@ void stepSteppers(){
     int absStepsA = abs(stepsA);
     int absStepsB = abs(stepsB);                               //absoluten wert aller step zahlen errechen (negative werte sttehen für rückwärts)
     int absStepsC = abs(stepsC);
-    int absStepsD = abs(stepsD);    
+    int absStepsD = abs(stepsD);
+
+    
+
     digitalWrite(MOTOR_A_DIR,stepsA<0);
     digitalWrite(MOTOR_B_DIR,stepsB<0);                        //für rückwärts fahren den dir pin wechseln
     digitalWrite(MOTOR_C_DIR,stepsC<0);
     digitalWrite(MOTOR_D_DIR,stepsD<0);
+
     for(int i = 0; i < 60; i++){
         digitalWrite(MOTOR_A_STEP,procStep(absStepsA,i));
         digitalWrite(MOTOR_B_STEP,procStep(absStepsB,i));      //alle benötigten step pins auf HIGH
