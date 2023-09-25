@@ -1,10 +1,51 @@
 #include "defMap.cpp"
+#include <Wire.h>
+
+
+// A    B
+
+
+// C    D
+
+int FWD[]  = { 1, 1, 1, 1};
+int SIDE[] = {-1, 1, 1,-1};
+int ROT[]  = { 1,-1, 1,-1};
+
+int wheelSpeeds[] = {0,0,0,0};
+
+void configurePins(){
+    pinMode(MOTOR_A_STEP,OUTPUT);
+    pinMode(MOTOR_A_DIR, OUTPUT);
+    pinMode(MOTOR_B_STEP,OUTPUT);
+    pinMode(MOTOR_B_DIR, OUTPUT);
+    pinMode(MOTOR_C_STEP,OUTPUT);
+    pinMode(MOTOR_C_DIR, OUTPUT);
+    pinMode(MOTOR_D_STEP,OUTPUT);
+    pinMode(MOTOR_D_DIR, OUTPUT);
+    pinMode(MOTOR_ENABLE,OUTPUT);
+}
+
 
 void setup(){
+    
     configurePins();
+    Wire.begin(2);
 }
 void loop(){
-    
+    if(Wire.available()){
+      
+    }
+    calculateStepSpeeds();
+}
+
+void calculateStepSpeeds(int velocity,int angle,int rotationVel){
+  int fwdComp  = cos(angle) * velocity;
+  int sideComp = sin(anlge) * velocity;
+  int rotComp  = rotationalVel;
+
+  for(int i = 0; i < 4;i++){
+    wheelSpeeds[i] = (FWD[i]*fwdComp) + (SIDE[i]*fwdComp) + (ROT[i]*fwdComp);
+  }
 }
 
 boolean procStep(int steps,int step){
@@ -14,5 +55,35 @@ boolean procStep(int steps,int step){
         return step%30 < stackA;
     }else{
         return step%30 < stackB;
+    }
+}
+
+
+void stepSteppers(){
+
+    int stepsA = wheelSpeeds[0];
+    int stepsB = wheelSpeeds[1];                               //absoluten wert aller step zahlen errechen (negative werte sttehen für rückwärts)
+    int stepsC = wheelSpeeds[2];
+    int stepsD = wheelSpeeds[3];
+
+    int absStepsA = abs(stepsA);
+    int absStepsB = abs(stepsB);                               //absoluten wert aller step zahlen errechen (negative werte sttehen für rückwärts)
+    int absStepsC = abs(stepsC);
+    int absStepsD = abs(stepsD);    
+    digitalWrite(MOTOR_A_DIR,stepsA<0);
+    digitalWrite(MOTOR_B_DIR,stepsB<0);                        //für rückwärts fahren den dir pin wechseln
+    digitalWrite(MOTOR_C_DIR,stepsC<0);
+    digitalWrite(MOTOR_D_DIR,stepsD<0);
+    for(int i = 0; i < 60; i++){
+        digitalWrite(MOTOR_A_STEP,procStep(absStepsA,i));
+        digitalWrite(MOTOR_B_STEP,procStep(absStepsB,i));      //alle benötigten step pins auf HIGH
+        digitalWrite(MOTOR_C_STEP,procStep(absStepsC,i));
+        digitalWrite(MOTOR_D_STEP,procStep(absStepsD,i));
+        delayMicroseconds(500000/600);                         //1. hälfte von 600Hz repeater
+        digitalWrite(MOTOR_A_STEP,false);
+        digitalWrite(MOTOR_B_STEP,false);
+        digitalWrite(MOTOR_C_STEP,false);                      //Alle step pins ausschalten
+        digitalWrite(MOTOR_D_STEP,false);
+        delayMicroseconds(500000/600);                         //2. hälfte von 600Hz repeater
     }
 }
