@@ -3,5 +3,5 @@
     "board": "arduino:megaavr:nona4809",
     "programmer": "arduino:medbg",
     "port": "COM11",
-    "sketch": "MotorController\\MotorController.ino"
+    "sketch": "MotorTest\\MotorTest.ino"
 }
