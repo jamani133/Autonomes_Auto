@@ -1,8 +1,8 @@
 #include "defMap.cpp"
 
 int FWD[]  = { 1, 1, 1, 1};
-int SIDE[] = {-1, 1, 1,-1};
-int ROT[]  = { 1,-1, 1,-1};
+int SIDE[] = {-1, 1, -1,1};
+int ROT[]  = { 1,-1, -1,1};
 
 boolean stopped = true;
 
@@ -25,30 +25,46 @@ void configurePins(){
 void setup(){
     
     configurePins();
-
+    delay(5000);
 
     digitalWrite(MOTOR_ENABLE,false);
-    manualAll(59);
-    manualAll(-59);
-    manualAll(10);
+
 }
 void loop(){
-    wheelSpeeds[0] = random(-59,59);
-    wheelSpeeds[1] = random(-59,59);
-    wheelSpeeds[2] = random(-59,59);
-    wheelSpeeds[3] = random(-59,59);
-    for(int i = 0; i < 40;i++){
-        stepSteppers();
-    }
-    
+    manualAll(30,FWD);
+    manualAll(-30,FWD);
+    delay(500);
+    manualAll(30,SIDE);
+    manualAll(-30,SIDE);
+    delay(500);
+    manualAll(30,ROT);
+    manualAll(-30,ROT);
+    delay(500);
+
 }
-void manualAll(int velo){
-    wheelSpeeds[0] = velo;
-    wheelSpeeds[1] = velo;
-    wheelSpeeds[2] = velo;
-    wheelSpeeds[3] = velo;
-    for(int i = 0; i < 40;i++){
-        stepSteppers();
+
+
+void manualAll(int velo, int dirmap[4]){
+    wheelSpeeds[0] = velo*dirmap[0];
+    wheelSpeeds[1] = velo*dirmap[1];
+    wheelSpeeds[2] = velo*dirmap[2];
+    wheelSpeeds[3] = velo*dirmap[3];
+
+    for(int i = 0; i < 80;i++){
+        stepSteppers(speedRamp(i,600,20,20,80));
+    }
+}
+
+int speedRamp(int cur, int maxSpeed, int rampup, int rampdown, int duration){
+    if(cur >= rampup){
+        if(cur>=duration-rampdown){
+            return(int(map(cur,duration-rampdown,duration,maxSpeed,0))); //down
+        }else{
+            return(maxSpeed); //hold
+        }
+    }else{
+        //up
+        return(int(map(cur,0,rampup,0,maxSpeed)));
     }
 }
 
@@ -78,7 +94,7 @@ boolean procStep(int steps,int step){
 }
 
 
-void stepSteppers(){
+void stepSteppers(int freq){
 
     int stepsA = wheelSpeeds[0];
     int stepsB = wheelSpeeds[1];                               //absoluten wert aller step zahlen errechen (negative werte sttehen für rückwärts)
@@ -98,15 +114,15 @@ void stepSteppers(){
     digitalWrite(MOTOR_D_DIR,stepsD<0);
 
     for(int i = 0; i < 60; i++){
-        digitalWrite(MOTOR_A_STEP,procStep(absStepsA,i));
-        digitalWrite(MOTOR_B_STEP,procStep(absStepsB,i));      //alle benötigten step pins auf HIGH
-        digitalWrite(MOTOR_C_STEP,procStep(absStepsC,i));
-        digitalWrite(MOTOR_D_STEP,procStep(absStepsD,i));
-        delayMicroseconds(500000/600);                         //1. hälfte von 600Hz repeater
+        digitalWrite(MOTOR_A_STEP,procStep(absStepsA,56));
+        digitalWrite(MOTOR_B_STEP,procStep(absStepsB,59));      //alle benötigten step pins auf HIGH
+        digitalWrite(MOTOR_C_STEP,procStep(absStepsC,59));
+        digitalWrite(MOTOR_D_STEP,procStep(absStepsD,59));
+        delayMicroseconds(500000/freq);                         //1. hälfte von 600Hz repeater
         digitalWrite(MOTOR_A_STEP,false);
         digitalWrite(MOTOR_B_STEP,false);
         digitalWrite(MOTOR_C_STEP,false);                      //Alle step pins ausschalten
         digitalWrite(MOTOR_D_STEP,false);
-        delayMicroseconds(500000/600);                         //2. hälfte von 600Hz repeater
+        delayMicroseconds(500000/freq);                         //2. hälfte von 600Hz repeater
     }
 }
