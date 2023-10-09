@@ -4,6 +4,8 @@ int FWD[]  = { 1, 1, 1, 1};
 int SIDE[] = {-1, 1, -1,1};
 int ROT[]  = { 1,-1, -1,1};
 
+//VL VR HR HL
+
 boolean stopped = true;
 
 int wheelSpeeds[] = {0,0,0,0};
@@ -31,14 +33,14 @@ void setup(){
 
 }
 void loop(){
-    manualAll(30,FWD);
-    manualAll(-30,FWD);
+    manualAll(16000,FWD);
+    manualAll(-16000,FWD);
     delay(500);
-    manualAll(30,SIDE);
-    manualAll(-30,SIDE);
+    manualAll(16000,SIDE);
+    manualAll(-16000,SIDE);
     delay(500);
-    manualAll(30,ROT);
-    manualAll(-30,ROT);
+    manualAll(16000,ROT);
+    manualAll(-16000,ROT);
     delay(500);
 
 }
@@ -51,7 +53,7 @@ void manualAll(int velo, int dirmap[4]){
     wheelSpeeds[3] = velo*dirmap[3];
 
     for(int i = 0; i < 80;i++){
-        stepSteppers(speedRamp(i,600,20,20,80));
+        stepSteppers(speedRamp(i,6000,20,20,80));
     }
 }
 
