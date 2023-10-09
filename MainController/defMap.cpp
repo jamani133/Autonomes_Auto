@@ -1,8 +1,8 @@
 //4x  3p lidar
-#define IRD_A A0 
-#define IRD_B A1
-#define IRD_C A2
-#define IRD_D A3
+#define IRD_A_IN A0 
+#define IRD_B_IN A1
+#define IRD_C_IN A2
+#define IRD_D_IN A3
 //4x  4p sonic
 #define SD_A_TRIG 6
 #define SD_A_ECHO 5
@@ -37,16 +37,5 @@
 #define AUDIO_MOSI 2
 #define AUDIO_MISO 21
 
-void configurePins(){
-    pinMode(SD_A_TRIG,OUTPUT);
-    pinMode(SD_A_ECHO,INPUT);
-    pinMode(SD_B_TRIG,OUTPUT);
-    pinMode(SD_B_ECHO,INPUT);
-    pinMode(SD_C_TRIG,OUTPUT);
-    pinMode(SD_C_ECHO,INPUT);
-    pinMode(SD_D_TRIG,OUTPUT);
-    pinMode(SD_D_ECHO,INPUT);
 
-    pinMode(SW_A,INPUT_PULLUP);
-    pinMode(SW_B,INPUT_PULLUP);
-}
+
