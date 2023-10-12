@@ -2,18 +2,17 @@
 //drivers
 #define MOTOR_ENABLE 12
 
-#define MOTOR_A_STEP 11
-#define MOTOR_A_DIR 10
+const int MOTOR_STEP[] = {11,9,7,5};
+const int MOTOR_DIR[] = {10,8,6,4};
 
-#define MOTOR_B_STEP 9
-#define MOTOR_B_DIR 8
 
-#define MOTOR_C_STEP 7
-#define MOTOR_C_DIR 6
 
-#define MOTOR_D_STEP 5
-#define MOTOR_D_DIR 4
-
+void configurePins(){
+    for(int i = 0; i < 4; i++){
+        pinMode(MOTOR_STEP[i],OUTPUT);
+        pinMode(MOTOR_DIR[i], OUTPUT);
+    }
+}
 //1x5p interconnet
 //GND
 //VCC
