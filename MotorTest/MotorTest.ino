@@ -1,5 +1,4 @@
 #include "defMap.hpp"
-#include "Bresenham.hpp"
 //#include "speedRamp.ino"
 
 int FWD[]  = { 10, 10, 10, 10};
@@ -10,15 +9,12 @@ int SIDE[] = {-10, 10, -10,10};
 int ROT[]  = { 10,-10, -10,10};
 
 
-Bresenham Bres[4];
-
 
 //VL VR HR HL
 
-boolean stopped = true;
-int wheelDist[] = {0,0,0,0};
-int wheelAbs[] = {0,0,0,0};
+int wheelFreq[] = {0,0,0,0};
 
+//int curSteps[] = {0,0,0,0};
 
 
 
@@ -32,55 +28,50 @@ void setup(){
 
 }
 void loop(){
+    const int dur = 5000;
+    const int velo = 200; 
     digitalWrite(MOTOR_ENABLE,false);
-    manualAll(1000,EXP,300);
-    manualAll(1000,EXP,-300);
+    manualAll(velo,EXP,dur);
+    manualAll(-velo,EXP,dur);
     digitalWrite(MOTOR_ENABLE,true);
     delay(3000);
     digitalWrite(MOTOR_ENABLE,false);
-    manualAll(1000,FWD,300);
-    manualAll(1000,FWD,-300);
+    manualAll(velo,FWD,dur);
+    manualAll(-velo,FWD,dur);
     digitalWrite(MOTOR_ENABLE,true);
     delay(3000);
     digitalWrite(MOTOR_ENABLE,false);
-    manualAll(1000,SIDE,300);
-    manualAll(1000,SIDE,-300);
+    manualAll(velo,SIDE,dur);
+    manualAll(-velo,SIDE,dur);
     digitalWrite(MOTOR_ENABLE,true);
     delay(3000);
     digitalWrite(MOTOR_ENABLE,false);
-    manualAll(1000,ROT,300);
-    manualAll(1000,ROT,-300);
+    manualAll(velo,ROT,dur);
+    manualAll(-velo,ROT,dur);
     digitalWrite(MOTOR_ENABLE,true);
     delay(3000);
 
 }
 
 
-void manualAll(int velo, int dirmap[4],int dist){
-
+void manualAll(int velo, int dirmap[4],int time){
+    int times[] = {0,0,0,0};
+    //curSteps = {0,0,0,0};
     for(int i = 0; i < 4; i++){
-        wheelDist[i] = dist*dirmap[i];
-        wheelAbs[i] = abs(wheelDist[i]);
+        wheelFreq[i] = velo*dirmap[i];
+        digitalWrite(MOTOR_DIR[i],wheelFreq[i]<0);
+        times[i] = 1000000/abs(wheelFreq[i]);
+    }
+    int start = millis();
+    while(start+time > millis()){
+        runSteppers(times);
     }
 
-    stepSteppers(velo*1000);  //15st/s/mm/s   speedRamp(millis()-start,velo*15,20,20,dist)
     
 }
 
-
-void stepSteppers(int timeFrame){
+void runSteppers(int times[]){
     for(int i = 0; i < 4; i++){
-        digitalWrite(MOTOR_DIR[i], wheelDist[i]<0);
-        Bres[i].config(wheelAbs[i],timeFrame);
-    }
-    int startVal = micros();
-    int prevTime = micros();
-    while(micros() < startVal+timeFrame){
-        for(int i = 0; i < 4; i ++){
-            Bres[i].advance(micros()-prevTime);
-            digitalWrite(MOTOR_STEP[i],Bres[i].queueStep);
-            Bres[i].queueStep = false;
-        }
-        prevTime = micros();
+        digitalWrite(MOTOR_STEP[i],micros() % times[i] > times[i]>>1);
     }
 }

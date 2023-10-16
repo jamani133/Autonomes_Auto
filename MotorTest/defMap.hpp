@@ -2,8 +2,8 @@
 //drivers
 #define MOTOR_ENABLE 12
 
-const int MOTOR_STEP[] = {11,9,7,5};
-const int MOTOR_DIR[] = {10,8,6,4};
+const int MOTOR_STEP[] = {10,9,6,5};
+const int MOTOR_DIR[] = {11,8,7,4};
 
 
 
