@@ -28,7 +28,7 @@ void setup(){
 
 }
 void loop(){
-    const int dur = 5000;
+    const int dur = 3000;
     const int velo = 200; 
     digitalWrite(MOTOR_ENABLE,false);
     manualAll(velo,EXP,dur);
@@ -62,7 +62,7 @@ void manualAll(int velo, int dirmap[4],int time){
         digitalWrite(MOTOR_DIR[i],wheelFreq[i]<0);
         times[i] = 1000000/abs(wheelFreq[i]);
     }
-    int start = millis();
+    long start = millis();
     while(start+time > millis()){
         runSteppers(times);
     }
@@ -72,6 +72,6 @@ void manualAll(int velo, int dirmap[4],int time){
 
 void runSteppers(int times[]){
     for(int i = 0; i < 4; i++){
-        digitalWrite(MOTOR_STEP[i],micros() % times[i] > times[i]>>1);
+        digitalWrite(MOTOR_STEP[i],micros() % long(times[i]) > long(times[i]>>1));
     }
 }
