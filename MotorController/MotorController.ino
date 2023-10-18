@@ -7,9 +7,7 @@
 
 // C    D
 
-int FWD[]  = { 1, 1, 1, 1};
-int SIDE[] = {-1, 1, 1,-1};
-int ROT[]  = { 1,-1, 1,-1};
+
 
 boolean stopped = true;
 
