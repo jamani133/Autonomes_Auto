@@ -17,19 +17,16 @@ void setup(){
     Wire.begin(0x01);
     configurePins();
     digitalWrite(MOTOR_ENABLE,true);
-    delay(5000);
-
-    digitalWrite(MOTOR_ENABLE,false);
     Wire.onReceive(onWire);
 }
 
 //mm/1ksteps : 63.81171875
 void loop(){
-    
     if(running){
-        runSteppers();
+        runSteppers(times);
+    }else{
+        delay(1);
     }
-
 }
 
 
@@ -55,9 +52,12 @@ void onWire(int num){
         wheelFreq[i] = ROT[i] * bROT * bMULT;
         if(wheelFreq[i] != 0){
             running = true;
+            times[i] = 1000000/abs(wheelFreq[i]);
+        }else{
+            times[i] = -1;
         }
         digitalWrite(MOTOR_DIR[i],wheelFreq[i]<0);
-        times[i] = 1000000/abs(wheelFreq[i]);
+        
     }
     digitalWrite(MOTOR_ENABLE,!running);
 }

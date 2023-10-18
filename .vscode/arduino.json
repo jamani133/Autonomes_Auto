@@ -2,6 +2,6 @@
     "configuration": "mode=on",
     "board": "arduino:megaavr:nona4809",
     "programmer": "arduino:medbg",
-    "port": "COM13",
+    "port": "COM3",
     "sketch": "MotorTest\\MotorTest.ino"
 }
