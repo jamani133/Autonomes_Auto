@@ -1,5 +1,14 @@
 #include <Wire.h>
-byte data[4] = {0,0,0,30};
+byte data[4] = {0,0,0,30};#
+
+
+int SensorWDT = 0;
+int MotorWDT = 0;
+int TelemWDT = 0;
+
+int LoopTime = 0;
+long loopMarker = 0;
+
 
 int DebugLevel = 4; //    -1 - 4 
 String Mode = "IDLE";
@@ -8,33 +17,58 @@ void setup() {
   Wire.begin();
   Serial.begin(115200);
   Serial1.begin(115200);
+
+
+  loopMarker = millis();
 }
 
 void loop() {
+    loopTime = millis()-loopMarker;
+    loopMarker = millis();
 
 
-    getSensorVals();
+    SensorWDT += loopTime;
+    if(SensorWDT > 300){
+        if(getSensorVals()){
+            SensorWDT = 0;
+        }
+    }
+
+    MotorWDT += loopTime;
+    if(MotorWDT > 300){
+        if(setMotorSpeeds()){
+            MotorWDT = 0;
+        }
+    }
+    
     
 
-    delay(1000);
 
-    Wire.beginTransmission(0x01);
+}
+
+
+Boolean setMotorSpeeds(){
     data[0] = 1;
     data[1] = 2;
     data[2] = 3;
+    Wire.beginTransmission(0x01);
     Wire.write(data,4);
     Wire.endTransmission();
     Serial.println("sending...");
-    Serial1.println("0:"+String(data[0])+" 1:"+String(data[1])+" 2:"+String(data[2])+" 3:"+String(data[3]));
+    Serial1.println();
+    DevLog("0:"+String(data[0])+" 1:"+String(data[1])+" 2:"+String(data[2])+" 3:"+String(data[3]),"I²C TEST",4);
+
+    return true;
 }
 
 
 
-void getSensorVals(){
+Boolean getSensorVals(){
     Wire.requestFrom(0x02, 1);
 	while(Wire.available()){
 		char c=Wire.read();
     }
+    return false;
 }
 
 //0 : foced
