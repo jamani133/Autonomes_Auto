@@ -12,18 +12,23 @@ void setup() {
 
 void loop() {
 
+
+	Wire.requestFrom(0x02, 1);
+	while(Wire.available()){
+		char c=Wire.read();
+    }
     
 
-  delay(1000);
+    delay(1000);
 
-  Wire.beginTransmission(0x01);
-  data[0] = 1;
-  data[1] = 2;
-  data[2] = 3;
-  Wire.write(data,4);
-  Wire.endTransmission();
-  Serial.println("sending...");
-  Serial1.println("0:"+String(data[0])+" 1:"+String(data[1])+" 2:"+String(data[2])+" 3:"+String(data[3]));
+    Wire.beginTransmission(0x01);
+    data[0] = 1;
+    data[1] = 2;
+    data[2] = 3;
+    Wire.write(data,4);
+    Wire.endTransmission();
+    Serial.println("sending...");
+    Serial1.println("0:"+String(data[0])+" 1:"+String(data[1])+" 2:"+String(data[2])+" 3:"+String(data[3]));
 }
 
 
@@ -85,10 +90,6 @@ String split(String s, char parser, int index) { //I STOLE THIS CODE
   }
   return rs;
 }
-  Serial1.println("Fuck You   0:"+String(data[0])+" 1:"+String(data[1])+" 2:"+String(data[2])+" 3:"+String(data[3]));
-}
-void loop() {
-	Wire.requestFrom(0x02, 1)
-	
-	while(Wire.available()){
-		char c=Wire.read();
+
+
+
