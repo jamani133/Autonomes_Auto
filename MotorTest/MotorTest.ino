@@ -39,10 +39,15 @@ void runSteppers(int times[]){
 
 
 void onWire(int num){
-    int bFWD = Wire.read();
-    int bSIDE = Wire.read();
-    int bROT = Wire.read();
-    int bMULT = Wire.read();
+    //int bFWD = Wire.read();
+    //int bSIDE = Wire.read();
+    //int bROT = Wire.read();
+    //int bMULT = Wire.read();
+
+    int bFWD = random(0,255);
+    int bSIDE = random(0,255);
+    int bROT = random(0,255);
+    int bMULT = 10;
     //calc freq
 
     running = false;
