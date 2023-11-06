@@ -23,3 +23,5 @@ void loop() {
 	
 	while(Wire.available()){
 		char c=Wire.read();
+		
+		

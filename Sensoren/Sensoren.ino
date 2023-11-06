@@ -85,7 +85,7 @@ void.requestEvent(){		//Read = anforderung vom Main
 	byte c=Wire.read()
 	switch(byte){		//sended je nach Anfrage die Entfernung
 		case 1:
-			Wire.write entfernung1
+			Wire.write dist1
 		break;
 		case 2:
 			Wire.write entfernung2
