@@ -13,10 +13,7 @@ void setup() {
 void loop() {
 
 
-	Wire.requestFrom(0x02, 1);
-	while(Wire.available()){
-		char c=Wire.read();
-    }
+    getSensorVals();
     
 
     delay(1000);
@@ -31,6 +28,14 @@ void loop() {
     Serial1.println("0:"+String(data[0])+" 1:"+String(data[1])+" 2:"+String(data[2])+" 3:"+String(data[3]));
 }
 
+
+
+void getSensorVals(){
+    Wire.requestFrom(0x02, 1);
+	while(Wire.available()){
+		char c=Wire.read();
+    }
+}
 
 //0 : foced
 //1 : error
