@@ -14,14 +14,18 @@ bool running = false;
 
 
 void setup(){
+    Serial.begin(115200);
     Wire.begin(0x01);
     configurePins();
+    delay(10000);
     digitalWrite(MOTOR_ENABLE,true);
+    Serial.println("aaaaaaaaaa");
     Wire.onReceive(onWire);
 }
 
 //mm/1ksteps : 63.81171875
 void loop(){
+    //Serial.println("weeeeeeee");
     if(running){
         runSteppers(times);
     }else{
@@ -44,11 +48,17 @@ void onWire(int num){
     //int bROT = Wire.read();
     //int bMULT = Wire.read();
 
-    int bFWD = random(0,255);
-    int bSIDE = random(0,255);
-    int bROT = random(0,255);
-    int bMULT = 10;
+    int bFWD = Wire.read();
+    int bSIDE = Wire.read();
+    int bROT = Wire.read();
+    int bMULT = Wire.read();
     //calc freq
+    bMULT = bMULT-127;
+    Serial.print("-----------------------------------");
+    Serial.println(bFWD);
+    Serial.println(bSIDE);
+    Serial.println(bROT);
+    Serial.println(bMULT);
 
     running = false;
     for(int i = 0; i < 4; i++){
