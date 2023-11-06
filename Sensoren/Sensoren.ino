@@ -30,7 +30,7 @@ long entfernung4=0;
 void setup(){
 	Serial.begin (9600);
 	configurePins();
-	Wire.begin(1);
+	Wire.begin(0x02);
 	Wire.onRequest(requestEvent);		
 }
 
