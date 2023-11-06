@@ -21,25 +21,7 @@ void setup(){
 }
 
 void loop(){
-    int IRD_A_ACC = 0;
-    int IRD_B_ACC = 0;
-    int IRD_C_ACC = 0;
-    int IRD_D_ACC = 0;
-    for(int i = 0; i < 100 ; i++){
-        IRD_A_ACC += IRD_A.getDistance();
-        IRD_B_ACC += IRD_B.getDistance();
-        IRD_C_ACC += IRD_C.getDistance();
-        IRD_D_ACC += IRD_D.getDistance();
-    }
-
-    Serial.print("IRD_A:");
-    Serial.print(IRD_A_ACC/100);
-    Serial.print("  IRD_B:");
-    Serial.print(IRD_B_ACC/100);
-    Serial.print("  IRD_C:");
-    Serial.print(IRD_C_ACC/100);
-    Serial.print("  IRD_D:");
-    Serial.println(IRD_D_ACC/100);
+   
 }
 
 
