@@ -5,9 +5,9 @@ int DebugLevel = 4; //    -1 - 4
 String Mode = "IDLE";
 
 void setup() {
+  Wire.begin();
   Serial.begin(115200);
   Serial1.begin(115200);
-  Wire.begin();
 }
 
 void loop() {
@@ -85,3 +85,10 @@ String split(String s, char parser, int index) { //I STOLE THIS CODE
   }
   return rs;
 }
+  Serial1.println("Fuck You   0:"+String(data[0])+" 1:"+String(data[1])+" 2:"+String(data[2])+" 3:"+String(data[3]));
+}
+void loop() {
+	Wire.requestFrom(0x02, 1)
+	
+	while(Wire.available()){
+		char c=Wire.read();
