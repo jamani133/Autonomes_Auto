@@ -1,5 +1,5 @@
 #include <Wire.h>
-byte data[4] = {0,0,0,30};#
+byte data[4] = {0,0,0,30};
 
 
 int SensorWDT = 0;
@@ -40,9 +40,6 @@ void loop() {
             MotorWDT = 0;
         }
     }
-    
-    
-
 
 }
 
