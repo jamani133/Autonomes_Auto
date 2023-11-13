@@ -1,5 +1,6 @@
 #include "defMap.cpp" //Variablen
 #include <wire:h> //i²c library
+#include <SharpIR.h> //SharpIR library
 
 //Lidar Sensoren 
 SharpIR IRD_A = SharpIR(SharpIR::GP2Y0A21YK0F,IRD_A_IN);
@@ -67,25 +68,17 @@ void loop(){
   dauer4 = pulseIn(SD_D_ECHO, HIGH);          // Empfang des US-Pulse
   entfernung4 = (dauer4 / 2) / 29.1;			// Enfernungsberechnung
 
-//Messungen speichern
-if (entfernung1 <=500 && entfernung1 >=5) {	
-	dist1 = entfernung1;
-}
-if (entfernung2 <=500 && entfernung2 >=5) {	
-	dist2 = entfernung2;
-}
-if (entfernung3 <=500 && entfernung3 >=5) {	
-	dist3 = entfernung3;
-}
-if (entfernung4 <=500 && entfernung4 >=5) {	
-	dist4 = entfernung4;
+  int distance1 = IRD_A.getDistance();
+  int distance2 = IRD_B.getDistance();
+  int distance3 = IRD_C.getDistance();
+  int distance4 = IRD_D.getDistance();
 }
 
-void.requestEvent(){		//Read = anforderung vom Main
+void requestEvent(){		//Read = anforderung vom Main
 	byte c=Wire.read()
 	switch(byte){		//sended je nach Anfrage die Entfernung
 		case 1:
-			Wire.write dist1
+			Wire.write entfernung1
 		break;
 		case 2:
 			Wire.write entfernung2
@@ -96,6 +89,18 @@ void.requestEvent(){		//Read = anforderung vom Main
 		case 4:
 			Wire.write entfernung4
 		break;		
+		case 5:
+			Wire.write distance1
+		break;
+		case 6:
+			Wire.write distance2
+		break;
+		case 7:
+			Wire.write distance3
+		break;
+		case 8:
+			Wire.write distance4
+		break;
 	}
 }
 
