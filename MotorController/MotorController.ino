@@ -1,19 +1,19 @@
-#include "defMap.cpp"
-#include <Wire.h>
+#include "defMap.cpp" //andere datei dings für pinbelegung
+#include <Wire.h> //I²C lib
 
 
 // A    B
-
+                 //welcher motor wo ist
 
 // C    D
 
 int FWD[]  = { 1, 1, 1, 1};
-int SIDE[] = {-1, 1, 1,-1};
+int SIDE[] = {-1, 1, 1,-1};       //komische mathe kacke die ich nd beschreiben kann aber die werte werden mit der geschwindigkeit multipliziert dait die motoren sic hbewegen
 int ROT[]  = { 1,-1, 1,-1};
 
-boolean stopped = true;
+boolean stopped = true;  //var für ob motor an oder nicht
 
-int wheelSpeeds[] = {0,0,0,0};
+int wheelSpeeds[] = {0,0,0,0}; //ic hhab vergessen was da s hier macht
 
 void configurePins(){
     pinMode(MOTOR_A_STEP,OUTPUT);
@@ -21,7 +21,7 @@ void configurePins(){
     pinMode(MOTOR_B_STEP,OUTPUT);
     pinMode(MOTOR_B_DIR, OUTPUT);
     pinMode(MOTOR_C_STEP,OUTPUT);
-    pinMode(MOTOR_C_DIR, OUTPUT);
+    pinMode(MOTOR_C_DIR, OUTPUT); //mach da pinmode kacke dingsda
     pinMode(MOTOR_D_STEP,OUTPUT);
     pinMode(MOTOR_D_DIR, OUTPUT);
     pinMode(MOTOR_ENABLE,OUTPUT);
@@ -30,24 +30,24 @@ void configurePins(){
 
 void setup(){
     
-    configurePins();
-    Wire.begin(2);
+    configurePins(); //pin modes setzen    siehe oben
+    Wire.begin(2);   //i²c dings initialisieren
 
-    calculateStepSpeeds(30,0,0);
-    digitalWrite(MOTOR_ENABLE,stopped);
+    calculateStepSpeeds(30,0,0);         //???????
+    digitalWrite(MOTOR_ENABLE,stopped);  //motor aus machen
 }
 void loop(){
 
-    if(Wire.available() >= 3){
-        byte[3] =
-        int vel = Wire.read();
-        int ang = Wire.read();
-        int rot = Wire.read();
-        calculateStepSpeeds(vel,ang,rot);
-        digitalWrite(MOTOR_ENABLE,stopped);
+    if(Wire.available() >= 3){  //wenn da si²c is dann i²c auslesen
+        byte[3] penis = Wire.read();
+        int vel = penis[0];          //ICH KANN NICHT MEHRRRRRRRRRRRRR
+        int ang = penis[1];
+        int rot = penis[2];
+        calculateStepSpeeds(vel,ang,rot);      //richtung und so ausrechenn
+        digitalWrite(MOTOR_ENABLE,stopped);    //motor aus machen
     }
     if(!stopped){
-        stepSteppers();
+        stepSteppers();   //motror drehen yeeee
     }
     
     //5V
@@ -60,7 +60,7 @@ void loop(){
 
 void calculateStepSpeeds(int velocity,int angle,int rotationVel){
   float Fangle = map(angle,0,255,-1,1);
-  int fwdComp  = cos(Fangle) * velocity;
+  int fwdComp  = cos(Fangle) * velocity;          //WHAT THE FUC k IS >THIS
   int sideComp = sin(Fangle) * velocity;
   int rotComp  = rotationVel;
   stopped = true;
