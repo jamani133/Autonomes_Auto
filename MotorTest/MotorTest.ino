@@ -15,8 +15,8 @@ bool running = false;         //is an oder nicht
 
 void setup(){
     Serial.begin(115200);     //serial begin halt nh
-    Wire.begin(0x01);         //i2c andfang dings
-    configurePins();          //poin mode oder so
+    Wire.begin(0x01);         //i2c anfang dings
+    configurePins();          //pin mode oder so
     delay(10000);                     //warum.
     digitalWrite(MOTOR_ENABLE,true);  //motor aus oder so
     Serial.println("aaaaaaaaaa");     //aaaaaaaaaaaaaaaaaaa
@@ -27,9 +27,9 @@ void setup(){
 void loop(){
     //Serial.println("weeeeeeee");   //weeeeee
     if(running){      
-        runSteppers(times);          //mototr drehen tun
+        runSteppers(times);          //mototor drehen tun
     }else{
-        delay(1);                    //motor nicht drehen tun
+        delay(1);                    //mototor nicht drehen tun
     }
 }
 
@@ -40,6 +40,7 @@ void runSteppers(int times[]){      //motr dreht sachen
         digitalWrite(MOTOR_STEP[i],micros() % long(times[i]) > long(times[i]>>1));  
     } // was in gottes nahmen ist dieser haufen bullshit was hab ih mir hierbei gedacht, egal es funktioniert, don't fix what aint broken
 }
+//IM GOING INSANE AYEEAAHHHHHH
 
 
 void onWire(int num){
@@ -47,11 +48,30 @@ void onWire(int num){
     //int bSIDE = Wire.read();
     //int bROT = Wire.read();//ok
     //int bMULT = Wire.read();
+    int bFWD;
+    int bSIDE;
+    int bROT; //tHis VaRiaBle waS nOt DecLareD iN ThiS ScOpE   NOW IT IS BITCH!
+    int bMULT;
+    int Boobies = 0;
+    while (Wire.availble()){
+        switch(Boobies){
+            case 0:
+                bFWD = Wire.read();  //WHAT
+            break;
+            case 1:
+                bSIDE = Wire.read(); //THE
+            break;
+            case 2:
+                bROT = Wire.read(); //FUCK
+            break;
+            case 3: 
+                bMULT = Wire.read(); //IS
+            break;
+        }
+        if(Boobies > 3){Wire.read();}  //THIS????
+        Boobies++; //hehe boobies
+    }
 
-    int bFWD = Wire.read();
-    int bSIDE = Wire.read();
-    int bROT = Wire.read();
-    int bMULT = Wire.read();
     //calc freq
     bMULT = bMULT-127;
     Serial.print("-----------------------------------");
