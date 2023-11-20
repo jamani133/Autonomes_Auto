@@ -2,9 +2,9 @@
 //#include "speedRamp.ino"
 #include "Wire.h"  //i2c shit
 
-int FWD[]  = { 1, 1, 1, 1};
-int SIDE[] = {-1, 1, 1,-1}; //what even is this
-int ROT[]  = { 1,-1, 1,-1};
+int FWD[]  = { 1, 1, -1, -1};
+int SIDE[] = {-1, 1, -1,  1}; //what even is this
+int ROT[]  = { 1,-1, -1,  1};
 //VL VR HR HL
 
 int wheelFreq[] = {0,0,0,0};  //rad schnell zahl dngs keine ahnung ic hhab zu viel monster energy getrunken ich kann micht nicht dran erinnern
@@ -14,12 +14,12 @@ bool running = false;         //is an oder nicht
 
 
 void setup(){
-    Serial.begin(115200);     //serial begin halt nh
+    Serial1.begin(115200);     //serial begin halt nh
     Wire.begin(0x01);         //i2c anfang dings
     configurePins();          //pin mode oder so
     delay(10000);                     //warum.
     digitalWrite(MOTOR_ENABLE,true);  //motor aus oder so
-    Serial.println("aaaaaaaaaa");     //aaaaaaaaaaaaaaaaaaa
+    Serial1.println("aaaaaaaaaa");     //aaaaaaaaaaaaaaaaaaa
     Wire.onReceive(onWire);           //iwi so das i2c event manager teil
 }
 
@@ -53,7 +53,7 @@ void onWire(int num){
     int bROT; //tHis VaRiaBle waS nOt DecLareD iN ThiS ScOpE   NOW IT IS BITCH!
     int bMULT;
     int Boobies = 0;
-    while (Wire.availble()){
+    while(Wire.available()){
         switch(Boobies){
             case 0:
                 bFWD = Wire.read();  //WHAT
@@ -73,18 +73,21 @@ void onWire(int num){
     }
 
     //calc freq
-    bMULT = bMULT-127;
-    Serial.print("-----------------------------------");
-    Serial.println(bFWD);
-    Serial.println(bSIDE); // okayyyyyy
-    Serial.println(bROT);
-    Serial.println(bMULT);
+    //bMULT = bMULT-127;
+    bFWD = bFWD-127;
+    bROT = bROT-127; //ashhhhhhhshaiduhasolfzgsdkufhzhzbeswoufbsof8zsgefkuszebf
+    bSIDE = bSIDE-127;
+    Serial1.print("-----------------------------------");
+    //Serial1.println(bFWD);
+    //Serial1.println(bSIDE); // okayyyyyy
+    //Serial1.println(bROT);
+    //erial1.println(bMULT);
 
     running = false;
     for(int i = 0; i < 4; i++){
         wheelFreq[i] = FWD[i] * bFWD * bMULT;
-        wheelFreq[i] = SIDE[i] * bSIDE * bMULT;  // ja. 
-        wheelFreq[i] = ROT[i] * bROT * bMULT;
+        wheelFreq[i] += SIDE[i] * bSIDE * bMULT;  // ja. 
+        wheelFreq[i] += ROT[i] * bROT * bMULT;
         if(wheelFreq[i] != 0){
             running = true;
             times[i] = 1000000/abs(wheelFreq[i]);   //ehhhhh, das tiel macht so dinge und die dange machen dann sachen, die sachen brauchen wir für zeug
