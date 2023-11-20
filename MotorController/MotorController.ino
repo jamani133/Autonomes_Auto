@@ -39,7 +39,7 @@ void setup(){
 void loop(){
 
     if(Wire.available() >= 3){
-
+        byte[3] =
         int vel = Wire.read();
         int ang = Wire.read();
         int rot = Wire.read();
