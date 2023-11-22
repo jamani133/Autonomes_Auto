@@ -18,15 +18,10 @@ long cm;
 
 int a; 
 
-
 int distance1;
 int distance2;
 int distance3;
 int distance4;
-
-
-
-
 
 long dauer1=0;
 long dauer2=0;
@@ -39,7 +34,7 @@ long entfernung3=0;
 long entfernung4=0;
 
 void setup(){
-	Serial.begin (115200);
+	Serial1.begin (115200);
 	configurePins();
 	Wire.begin(0x02);
 	Wire.onRequest(requestEvent);		
@@ -82,8 +77,25 @@ void loop(){
   distance2 = IRD_B.getDistance();
   distance3 = IRD_C.getDistance();
   distance4 = IRD_D.getDistance();
-  
+
+ Serial1.print("UA:");
+ Serial1.print(entfernung1);
+ Serial1.print(",UB:"); 
+ Serial1.print(entfernung2);
+ Serial1.print(",UC:");
+ Serial1.print(entfernung3);
+ Serial1.print(",UD:");
+ Serial1.print(entfernung4);
+ Serial1.print(",IA:"); 
+ Serial1.print(distance1);
+ Serial1.print(",IB:"); 
+ Serial1.print(distance2);
+ Serial1.print(",IC:"); 
+ Serial1.print(distance3);
+ Serial1.print(",ID:"); 
+ Serial1.println(distance4);
 }
+
 
 void requestEvent(){		//Read = anforderung vom Main
 	byte c=Wire.read()
