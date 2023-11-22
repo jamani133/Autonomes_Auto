@@ -6,12 +6,32 @@ int SensorWDT = 0;
 int MotorWDT = 0;
 int TelemWDT = 0;
 
+int sensorTimeMax = 100;
+int  motorTimeMax = 100; 
+
 int LoopTime = 0;
 long loopMarker = 0;
+
+int motorFWD = 0;
+int motorROT = 0;
+int motorSIDE = 0;
+int motorMULT = 0;
 
 
 int DebugLevel = 4; //    -1 - 4 
 String Mode = "IDLE";
+
+
+void DevLog(String Message,String Origin, int level = 1){
+    if(level >= DebugLevel){
+        const String Codes[] = {"FORCED","ERROR","WARNING","SUCCESS","STATE"};
+        String ErrorCode = Codes[level];
+        String msg = Origin+": "+ErrorCode+" -> "+Message;
+        Serial1.print(msg);  //MotorCalc: ERROR -> NullPointerException
+        Serial.print(msg);
+    }
+}
+
 
 void setup() {
   Wire.begin();
@@ -23,19 +43,46 @@ void setup() {
 }
 
 void loop() {
-    loopTime = millis()-loopMarker;
+    LoopTime = millis()-loopMarker;
     loopMarker = millis();
+    
+    if(Serial1.available()){
+        HandleSerialIn(Serial1.readString());
+    }
+    if(Serial.available()){
+        HandleSerialIn(Serial.readString());
+    }
 
-
-    SensorWDT += loopTime;
-    if(SensorWDT > 300){
+    SensorWDT += LoopTime;
+    if(SensorWDT > sensorTimeMax){
         if(getSensorVals()){
             SensorWDT = 0;
         }
     }
 
-    MotorWDT += loopTime;
-    if(MotorWDT > 300){
+    if(Mode == "IDLE"){
+        motorFWD = 0;
+        motorMULT = 0;
+        motorROT = 0;
+        motorSIDE = 0;
+    }else if(Mode == "AUTO"){
+        //auto logik
+    }else if(Mode == "MANUAL"){
+        motorFWD = 128;
+        motorMULT = 30;
+        motorROT = 0;
+        motorSIDE = 0;
+    }else if(Mode == "KILLER"){
+        motorFWD = 0;
+        motorMULT = 60;
+        motorROT = 128;
+        motorSIDE = 128;
+    }
+
+
+
+    MotorWDT += LoopTime;
+    if(MotorWDT > motorTimeMax){
         if(setMotorSpeeds()){
             MotorWDT = 0;
         }
@@ -43,10 +90,11 @@ void loop() {
 }
 
 
-Boolean setMotorSpeeds(){
-    data[0] = 1;
-    data[1] = 2;
-    data[2] = 3;
+boolean setMotorSpeeds(){
+    data[0] = motorFWD+127;
+    data[1] = motorSIDE+127;
+    data[2] = motorROT+127;
+    data[3] = motorMULT;
     Wire.beginTransmission(0x01);
     Wire.write(data,4);
     Wire.endTransmission();
@@ -59,12 +107,17 @@ Boolean setMotorSpeeds(){
 
 
 
-Boolean getSensorVals(){
+boolean getSensorVals(){
     Wire.requestFrom(0x02, 1);
 	while(Wire.available()){
 		char c=Wire.read();
     }
     return false;
+}
+
+
+boolean equals(String a, String b){ //IT IS I ; MEGAMIND; AND I AM TOO LAZY TO FIX MISTKAES
+    return a.equals(b);
 }
 
 //0 : foced
@@ -74,57 +127,61 @@ Boolean getSensorVals(){
 //4 : states
 
 void HandleSerialIn(String Message){
-    String operator = split(Message," ",0);
+    String Operator = "";//split(Message," ",0);
     String Val1 = split(Message," ",1);
     String Val2 = split(Message," ",2);
     String Val3 = split(Message," ",3);
 
-    if(equals(operator,"set")){
-        if(equals(Val1,"DebugLevel")){
+    if(Operator.equals("set")){
+        if(Val1.equals("DebugLevel")){
             DebugLevel = Val2.toInt();
         }
-        if(equals(Val1,"Mode")){
+        if(Val1.equals("MotorTime")){
+            motorTimeMax = Val2.toInt();
+        }
+        if(Val1.equals("SensorTime")){
+            sensorTimeMax = Val2.toInt();
+        }
+        if(Val1.equals("Mode")){
             Mode = Val2;
         }
     }
 
 
-    if(equals(operator,"get")){
-        if(equals(Val1,"DebugLevel")){
+    if(Operator.equals("get")){
+        if(Val1.equals("DebugLevel")){
             DevLog("DebugLevel is "+String(DebugLevel),"cnsl_get",0);
         }
-        if(equals(Val1,"Mode")){
+        if(Val1.equals("MotorTime")){
+            DevLog("MotorTime is "+String(motorTimeMax),"cnsl_get",0);
+        }
+        if(Val1.equals("SensorTime")){
+            DevLog("SensorTime is "+String(sensorTimeMax),"cnsl_get",0);
+        }
+        if(Val1.equals("Mode")){
             DevLog("Mode is "+String(Mode),"cnsl_get",0);
         }
     }
 }
 
-void DevLog(String Message,String Origin, int level = 1){
-    if(level >= DebugLevel){
-        const String Codes[] = {"FORCED","ERROR","WARNING","SUCCESS","STATE"};
-        String ErrorCode = Codes[level];
-        String msg = Origin+": "+ErrorCode+" -> "+Message;
-        Serial1.print(msg);  //MotorCalc: ERROR -> NullPointerException
-        Serial.print(msg);
-    }
-}
+
 
 	
-String split(String s, char parser, int index) { //I STOLE THIS CODE
-  String rs="";
-  int parserIndex = index;
-  int parserCnt=0;
-  int rFromIndex=0, rToIndex=-1;
-  while (index >= parserCnt) {
-    rFromIndex = rToIndex+1;
-    rToIndex = s.indexOf(parser,rFromIndex);
-    if (index == parserCnt) {
-      if (rToIndex == 0 || rToIndex == -1) return "";
-      return s.substring(rFromIndex,rToIndex);
-    } else parserCnt++;
-  }
-  return rs;
-}
+String split(String s, char parser, int index) {        //I STOLE THIS CODE
+  String rs="";                                         //I STOLE THIS CODE
+  int parserIndex = index;                              //I STOLE THIS CODE
+  int parserCnt=0;                                      //I STOLE THIS CODE
+  int rFromIndex=0, rToIndex=-1;                        //I STOLE THIS CODE
+  while (index >= parserCnt) {                          //I STOLE THIS CODE
+    rFromIndex = rToIndex+1;                            //I STOLE THIS CODE
+    rToIndex = s.indexOf(parser,rFromIndex);            //I STOLE THIS CODE
+    if (index == parserCnt) {                           //I STOLE THIS CODE
+      if (rToIndex == 0 || rToIndex == -1) return "";   //I STOLE THIS CODE
+      return s.substring(rFromIndex,rToIndex);          //I STOLE THIS CODE
+    } else parserCnt++;                                 //I STOLE THIS CODE
+  }                                                     //I STOLE THIS CODE
+  return rs;                                            //I STOLE THIS CODE
+}                                                       //I STOLE THIS CODE
 
 
 
