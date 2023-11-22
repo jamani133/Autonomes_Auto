@@ -18,6 +18,16 @@ long cm;
 
 int a; 
 
+
+int distance1;
+int distance2;
+int distance3;
+int distance4;
+
+
+
+
+
 long dauer1=0;
 long dauer2=0;
 long dauer3=0;
@@ -68,10 +78,11 @@ void loop(){
   dauer4 = pulseIn(SD_D_ECHO, HIGH);          // Empfang des US-Pulse
   entfernung4 = (dauer4 / 2) / 29.1;			// Enfernungsberechnung
 
-  int distance1 = IRD_A.getDistance();
-  int distance2 = IRD_B.getDistance();
-  int distance3 = IRD_C.getDistance();
-  int distance4 = IRD_D.getDistance();
+  distance1 = IRD_A.getDistance();
+  distance2 = IRD_B.getDistance();
+  distance3 = IRD_C.getDistance();
+  distance4 = IRD_D.getDistance();
+  
 }
 
 void requestEvent(){		//Read = anforderung vom Main
