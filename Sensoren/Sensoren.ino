@@ -47,7 +47,7 @@ void loop(){
   delayMicroseconds(10);
   digitalWrite(SD_A_TRIG, LOW);
   dauer1 = pulseIn(SD_A_ECHO, HIGH);          // Empfang des US-Pulse
-  entfernung1 = (dauer1 / 2) / 29.1;			// Enfernungsberechnung
+  entfernung1 = (dauer1 / 2) / 29;			// Enfernungsberechnung
 
   digitalWrite(SD_B_TRIG, LOW);
   delayMicroseconds(5);
@@ -55,7 +55,7 @@ void loop(){
   delayMicroseconds(10);
   digitalWrite(SD_B_TRIG, LOW);
   dauer2 = pulseIn(SD_B_ECHO, HIGH);          // Empfang des US-Pulse
-  entfernung2 = (dauer2 / 2) / 29.1;			// Enfernungsberechnung
+  entfernung2 = (dauer2 / 2) / 29;			// Enfernungsberechnung
 
   digitalWrite(SD_C_TRIG, LOW);
   delayMicroseconds(5);
@@ -63,7 +63,7 @@ void loop(){
   delayMicroseconds(10);
   digitalWrite(SD_C_TRIG, LOW);
   dauer3 = pulseIn(SD_C_ECHO, HIGH);          // Empfang des US-Pulse
-  entfernung3 = (dauer3 / 2) / 29.1;			// Enfernungsberechnung
+  entfernung3 = (dauer3 / 2) / 29;			// Enfernungsberechnung
 
   digitalWrite(SD_D_TRIG, LOW);
   delayMicroseconds(5);
@@ -71,7 +71,7 @@ void loop(){
   delayMicroseconds(10);
   digitalWrite(SD_D_TRIG, LOW);
   dauer4 = pulseIn(SD_D_ECHO, HIGH);          // Empfang des US-Pulse
-  entfernung4 = (dauer4 / 2) / 29.1;			// Enfernungsberechnung
+  entfernung4 = (dauer4 / 2) / 29;			// Enfernungsberechnung
 
   distance1 = IRD_A.getDistance();
   distance2 = IRD_B.getDistance();
