@@ -1,5 +1,5 @@
 #include "defMap.cpp" //Variablen
-#include <wire:h> //i²c library
+#include <Wire.h> //i²c library
 #include <SharpIR.h> //SharpIR library
 
 //Lidar Sensoren 
@@ -59,13 +59,13 @@ void loop(){
 
   digitalWrite(SD_C_TRIG, LOW);
   delayMicroseconds(5);
-  digitalWrite(SD_C_E, HTRIGGH);          // Senden des Pulse
+  digitalWrite(SD_C_TRIG, HIGH);          // Senden des Pulse
   delayMicroseconds(10);
   digitalWrite(SD_C_TRIG, LOW);
   dauer3 = pulseIn(SD_C_ECHO, HIGH);          // Empfang des US-Pulse
   entfernung3 = (dauer3 / 2) / 29.1;			// Enfernungsberechnung
 
-  digitalWrite(SC_D_TRIG, LOW);
+  digitalWrite(SD_D_TRIG, LOW);
   delayMicroseconds(5);
   digitalWrite(SD_D_TRIG, HIGH);          // Senden des Pulse
   delayMicroseconds(10);
@@ -98,31 +98,31 @@ void loop(){
 
 
 void requestEvent(){		//Read = anforderung vom Main
-	byte c=Wire.read()
-	switch(byte){		//sended je nach Anfrage die Entfernung
+	byte c = Wire.read();
+	switch(c){		//sended je nach Anfrage die Entfernung
 		case 1:
-			Wire.write entfernung1
+			Wire.write(entfernung1);
 		break;
 		case 2:
-			Wire.write entfernung2
+			Wire.write(entfernung2);
 		break;
 		case 3:
-			Wire.write entfernung3
+			Wire.write(entfernung3);
 		break;
 		case 4:
-			Wire.write entfernung4
+			Wire.write(entfernung4);
 		break;		
 		case 5:
-			Wire.write distance1
+			Wire.write(distance1);
 		break;
 		case 6:
-			Wire.write distance2
+			Wire.write(distance2);
 		break;
 		case 7:
-			Wire.write distance3
+			Wire.write(distance3);
 		break;
 		case 8:
-			Wire.write distance4
+			Wire.write(distance4);
 		break;
 	}
 }
