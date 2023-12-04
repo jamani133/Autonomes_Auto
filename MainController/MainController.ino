@@ -1,10 +1,15 @@
 #include <Wire.h>
 byte data[4] = {0,0,0,30};
 
+String submode = "startup"
+
+boolean freeMap[] = {false,false,false,false};
 
 int SensorWDT = 0;
 int MotorWDT = 0;
 int TelemWDT = 0;
+
+int eurobeatCountdown = -1;  //DONT ASK
 
 int sensorTimeMax = 100;
 int  motorTimeMax = 100; 
@@ -61,19 +66,81 @@ void loop() {
         }
     }
 
+    motorMULT = 16;
     if(Mode == "IDLE"){
         motorFWD = 0;
-        motorMULT = 0;
         motorROT = 0;
         motorSIDE = 0;
     }else if(Mode == "AUTO"){
-        //auto logik
+        if(submode.equals("startup")){
+            motorFWD = 0;
+            motorROT = 0;
+            motorSIDE = 0;
+                     //fwd, back,left,right
+            freeMap = {true,true,true,true};
+            if(dist_back <= 20){
+                freeMap[1] = false;
+            }
+            if(dist_fwd <= 20){
+                freeMap[0] = false;
+            }
+            if(dist_left <= 20){
+                freeMap[2] = false;
+            }
+            if(dist_right <= 20){
+                freeMap[3] = false;
+            }
+            if(freeMap == {false,false,false,false}){
+                submode = "sad";
+            }else{
+                submode = "check";
+            }
+        }else if(submode.equals("forward")){
+            
+        }else if(submode.equals("backup")){
+            
+        }else if(submode.equals("center_forward")){
+            
+        }else if(submode.equals("center_backwards")){
+            
+        }else if(submode.equals("mov_left")){
+            
+        }else if(submode.equals("mov_right")){
+            
+        }else if(submode.equals("check")){
+            freeMap = {true,true,true,true};
+            while(millis()<start+2000){
+                
+            }
+            if(dist_back <= 20){
+                freeMap[1] = false;
+            }
+            if(dist_fwd <= 20){
+                freeMap[0] = false;
+            }
+            if(dist_left <= 20){
+                freeMap[2] = false;
+            }
+            if(dist_right <= 20){
+                freeMap[3] = false;
+            }
+        }else if(submode.equals("honk")){
+            
+        }else if(submode.equals("sad")){
+            
+        }else if(submode.equals("a")){
+            
+        }else if(submode.equals("a")){
+            
+        }else{
+            DevLog("no valid submode detected","AUTO_MODE",1);
+        }
     }else if(Mode == "MANUAL"){
         motorFWD = 128;
         motorMULT = 30;
         motorROT = 0;
         motorSIDE = 0;
-    }else if(Mode == "KILLER"){
+    }else if(Mode == "RAMPAGE"){
         motorFWD = 0;
         motorMULT = 60;
         motorROT = 128;
@@ -145,6 +212,7 @@ void HandleSerialIn(String Message){
         }
         if(Val1.equals("Mode")){
             Mode = Val2;
+            submode = "startup"
         }
     }
 
