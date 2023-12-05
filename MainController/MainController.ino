@@ -94,6 +94,7 @@ void loop() {
                 submode = "sad";
             }else{
                 submode = "check";
+                start = millis();
             }
         }else if(submode.equals("forward")){
             
@@ -108,21 +109,30 @@ void loop() {
         }else if(submode.equals("mov_right")){
             
         }else if(submode.equals("check")){
+            #define rotTime 2000
             freeMap = {true,true,true,true};
-            while(millis()<start+2000){
-                
-            }
-            if(dist_back <= 20){
-                freeMap[1] = false;
-            }
-            if(dist_fwd <= 20){
-                freeMap[0] = false;
-            }
-            if(dist_left <= 20){
-                freeMap[2] = false;
-            }
-            if(dist_right <= 20){
-                freeMap[3] = false;
+            if(millis()<start+rotTime){
+                motorFWD = 0;
+                motorMULT = 10;
+                motorROT = -64;
+                motorSIDE = 0;
+            }else if(millis()<start+(rotTime*3000)){
+                motorFWD = 0;
+                motorMULT = 10;
+                motorROT = 64;
+                motorSIDE = 0;
+                if(dist_back <= 20){
+                    freeMap[1] = false;
+                }
+                if(dist_fwd <= 20){
+                    freeMap[0] = false;
+                }
+                if(dist_left <= 20){
+                    freeMap[2] = false;
+                }
+                if(dist_right <= 20){
+                    freeMap[3] = false;
+                }
             }
         }else if(submode.equals("honk")){
             
