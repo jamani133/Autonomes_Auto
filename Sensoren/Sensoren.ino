@@ -28,10 +28,17 @@ long dauer2=0;
 long dauer3=0;
 long dauer4=0;
 
-long entfernung1=0;
-long entfernung2=0;
-long entfernung3=0;
-long entfernung4=0;
+int entfernung1=0;
+int entfernung2=0;
+int entfernung3=0;
+int entfernung4=0;
+
+
+int tentfernung1=0;
+int tentfernung2=0;
+int tentfernung3=0;
+int tentfernung4=0;
+
 
 void setup(){
 	Serial1.begin (115200);
@@ -47,7 +54,15 @@ void loop(){
   delayMicroseconds(10);
   digitalWrite(SD_A_TRIG, LOW);
   dauer1 = pulseIn(SD_A_ECHO, HIGH);          // Empfang des US-Pulse
-  entfernung1 = (dauer1 / 2) / 29;			// Enfernungsberechnung
+  tentfernung1 = (dauer1 / 2) / 29;			// Enfernungsberechnung
+  if(tentfernung1 < 500){
+    if(tentfernung1 < entfernung1*0.8  || entfernung1 < tentfernung1){
+      entfernung1 = (0.9*entfernung1) + (0.1*tentfernung1);
+    }else{
+      entfernung1 = (0.9*entfernung1);
+    }
+  }
+
 
   digitalWrite(SD_B_TRIG, LOW);
   delayMicroseconds(5);
@@ -55,7 +70,11 @@ void loop(){
   delayMicroseconds(10);
   digitalWrite(SD_B_TRIG, LOW);
   dauer2 = pulseIn(SD_B_ECHO, HIGH);          // Empfang des US-Pulse
-  entfernung2 = (dauer2 / 2) / 29;			// Enfernungsberechnung
+  tentfernung2 = (dauer2 / 2) / 29;			// Enfernungsberechnung
+  if(tentfernung2 < 300){
+    entfernung2 = (0.7*entfernung2) + (0.3*tentfernung2);
+  }
+
 
   digitalWrite(SD_C_TRIG, LOW);
   delayMicroseconds(5);
@@ -63,7 +82,11 @@ void loop(){
   delayMicroseconds(10);
   digitalWrite(SD_C_TRIG, LOW);
   dauer3 = pulseIn(SD_C_ECHO, HIGH);          // Empfang des US-Pulse
-  entfernung3 = (dauer3 / 2) / 29;			// Enfernungsberechnung
+  tentfernung3 = (dauer3 / 2) / 29;			// Enfernungsberechnung
+  if(tentfernung3 < 300){
+    entfernung3 = (0.7*entfernung3) + (0.3*tentfernung3);
+  }
+
 
   digitalWrite(SD_D_TRIG, LOW);
   delayMicroseconds(5);
@@ -71,29 +94,36 @@ void loop(){
   delayMicroseconds(10);
   digitalWrite(SD_D_TRIG, LOW);
   dauer4 = pulseIn(SD_D_ECHO, HIGH);          // Empfang des US-Pulse
-  entfernung4 = (dauer4 / 2) / 29;			// Enfernungsberechnung
+  tentfernung4 = (dauer4 / 2) / 29;			// Enfernungsberechnung
+  if(tentfernung4 < 300){
+    entfernung4 = (0.7*entfernung4) + (0.3*tentfernung4);
+  }
 
   distance1 = IRD_A.getDistance();
   distance2 = IRD_B.getDistance();
   distance3 = IRD_C.getDistance();
   distance4 = IRD_D.getDistance();
-
+  //delay(100);
+  
  Serial1.print("UA:");
  Serial1.print(entfernung1);
- Serial1.print(",UB:"); 
+ /*Serial1.print(",UB:"); 
  Serial1.print(entfernung2);
  Serial1.print(",UC:");
  Serial1.print(entfernung3);
  Serial1.print(",UD:");
  Serial1.print(entfernung4);
+ */
  Serial1.print(",IA:"); 
- Serial1.print(distance1);
+ Serial1.println(distance1);
+ /*
  Serial1.print(",IB:"); 
  Serial1.print(distance2);
  Serial1.print(",IC:"); 
  Serial1.print(distance3);
  Serial1.print(",ID:"); 
  Serial1.println(distance4);
+ */
 }
 
 
