@@ -78,18 +78,7 @@ void loop() {
             motorSIDE = 0;
                      //fwd, back,left,right
             freeMap = {true,true,true,true};
-            if(dist_back <= 20){
-                freeMap[1] = false;
-            }
-            if(dist_fwd <= 20){
-                freeMap[0] = false;
-            }
-            if(dist_left <= 20){
-                freeMap[2] = false;
-            }
-            if(dist_right <= 20){
-                freeMap[3] = false;
-            }
+            ezmap();
             if(freeMap == {false,false,false,false}){
                 submode = "sad";
             }else{
@@ -121,23 +110,12 @@ void loop() {
                 motorMULT = 10;
                 motorROT = 64;
                 motorSIDE = 0;
-                if(dist_back <= 20){
-                    freeMap[1] = false;
-                }
-                if(dist_fwd <= 20){
-                    freeMap[0] = false;
-                }
-                if(dist_left <= 20){
-                    freeMap[2] = false;
-                }
-                if(dist_right <= 20){
-                    freeMap[3] = false;
-                }
+                ezmap();
             }
         }else if(submode.equals("honk")){
             
         }else if(submode.equals("sad")){
-            
+            playingsound("sad");
         }else if(submode.equals("a")){
             
         }else if(submode.equals("a")){
@@ -150,11 +128,20 @@ void loop() {
         motorMULT = 30;
         motorROT = 0;
         motorSIDE = 0;
+        if(inputWDT < 500){
+            motorFWD = inputFWD;
+            motorMULT = inputMULT;
+            motorROT = inputROT;
+            motorSIDE = inputSIDE;
+        }else{
+            motorFWD = 0;
+            motorMULT = 0;
+            motorROT = 0;
+            motorSIDE = 0;
+        }
     }else if(Mode == "RAMPAGE"){
-        motorFWD = 0;
-        motorMULT = 60;
-        motorROT = 128;
-        motorSIDE = 128;
+        motorMULT = 255;
+        ezmap();
     }
 
 
@@ -167,6 +154,20 @@ void loop() {
     }
 }
 
+void ezmap(){
+    if(dist_back <= 20){
+        freeMap[1] = false;
+    }
+    if(dist_fwd <= 20){
+        freeMap[0] = false;
+    }
+    if(dist_left <= 20){
+        freeMap[2] = false;
+    }
+    if(dist_right <= 20){
+        freeMap[3] = false;
+    }
+}
 
 boolean setMotorSpeeds(){
     data[0] = motorFWD+127;
