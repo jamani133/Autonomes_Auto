@@ -27,7 +27,7 @@ int inputROT = 0;
 int inputMULT = 0;
 
 int eurobeatCountdown = -1;  //DONT ASK
-
+String allowed[4] = {"","","",""};
 int sensorTimeMax = 100;
 int  motorTimeMax = 100; 
 
@@ -44,6 +44,24 @@ long start = millis();
 int DebugLevel = 4; //    -1 - 4 
 String Mode = "RAMPAGE";
 
+void allowDir(String dir){
+    if(dir.equals("none")){
+        allow[0] = "";
+        allow[1] = "";
+        allow[2] = "";
+        allow[3] = "";
+        return;
+    }
+    for(int i = 0;i<4;i++){
+        if(allow[i].equals("")){
+            allow[i] = dir;
+            return;
+        }else if(allow[i].equals(dir)){
+            return;
+        }
+    }
+    return;
+}
 
 void DevLog(String Message,String Origin, int level = 1){
     if(level >= DebugLevel){
@@ -105,14 +123,10 @@ void loop() {
         }else if(submode.equals("forward")){
             
         }else if(submode.equals("backup")){
+
+        }else if(submode.equals("left")){
             
-        }else if(submode.equals("center_forward")){
-            
-        }else if(submode.equals("center_backwards")){
-            
-        }else if(submode.equals("mov_left")){
-            
-        }else if(submode.equals("mov_right")){
+        }else if(submode.equals("right")){
             
         }else if(submode.equals("check")){
             #define rotTime 2000
@@ -129,12 +143,35 @@ void loop() {
                 motorSIDE = 0;
                 ezmap();
             }
+            submode = "decide"
         }else if(submode.equals("honk")){
-            
+            //honk
         }else if(submode.equals("sad")){
             //playingsound("sad");
-        }else if(submode.equals("a")){
-            
+        }else if(submode.equals("decide")){
+            if(freeMap[0]){
+                submode = "forward";
+            }else{
+                allowDir("none");
+                int n = 0;
+                if(freeMap[1]){
+                    allowDir("backup");
+                    n++;
+                }
+                if(freeMap[2]){
+                    allowDir("left");
+                    n++;
+                }
+                if(freeMap[3]){
+                    allowDir("right");
+                    n++;
+                }
+                if(n == 0){
+                    submode = "sad";
+                }else{
+                    submode = allow[random(n-1)];
+                }
+            }
         }else if(submode.equals("a")){
             
         }else{
@@ -158,9 +195,9 @@ void loop() {
         }
     }else if(Mode == "RAMPAGE"){
         motorFWD = 0;
-        motorMULT = 0;
+        motorMULT = 30;
         motorROT = 127;
-        motorSIDE = 40;
+        motorSIDE = 0;
     }
 
 

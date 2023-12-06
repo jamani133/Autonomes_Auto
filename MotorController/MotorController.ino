@@ -8,7 +8,7 @@ int ROT[]  = { 1,-1, -1,  1};
 //VL VR HR HL
 
 int wheelFreq[] = {0,0,0,0};  //rad schnell zahl dngs keine ahnung ic hhab zu viel monster energy getrunken ich kann micht nicht dran erinnern
-int times[] = {0,0,0,0};      //anderes red scchnell ding?????????????
+int times[] = {2000,2000,2000,2000};      //anderes red scchnell ding?????????????
 //int curSteps[] = {0,0,0,0};
 bool running = false;         //is an oder nicht
 
@@ -18,9 +18,10 @@ void setup(){
     Wire.begin(0x01);         //i2c anfang dings
     configurePins();          //pin mode oder so
     delay(10000);                     //warum.
-    digitalWrite(MOTOR_ENABLE,true);  //motor aus oder so
+    digitalWrite(MOTOR_ENABLE,false);  //motor aus oder so
     Serial1.println("aaaaaaaaaa");     //aaaaaaaaaaaaaaaaaaa
     Wire.onReceive(onWire);           //iwi so das i2c event manager teil
+    delay(1000);
 }
 
 //mm/1ksteps : 63.81171875
@@ -77,11 +78,11 @@ void onWire(int num){
     bFWD = bFWD-127;
     bROT = bROT-127; //ashhhhhhhshaiduhasolfzgsdkufhzhzbeswoufbsof8zsgefkuszebf
     bSIDE = bSIDE-127;
-    Serial1.print("-----------------------------------");
-    //Serial1.println(bFWD);
-    //Serial1.println(bSIDE); // okayyyyyy
-    //Serial1.println(bROT);
-    //erial1.println(bMULT);
+    Serial1.println("-----------------------------------");
+    Serial1.println(bFWD);
+    Serial1.println(bSIDE); // okayyyyyy
+    Serial1.println(bROT);
+    Serial1.println(bMULT);
 
     running = false;
     for(int i = 0; i < 4; i++){
