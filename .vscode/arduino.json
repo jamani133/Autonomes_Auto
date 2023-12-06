@@ -2,5 +2,5 @@
     "board": "arduino:megaavr:nona4809",
     "port": "COM3",
     "programmer": "arduino:medbg",
-    "sketch": "Sensoren\\Sensoren.ino"
+    "sketch": "MainController\\MainController.ino"
 }

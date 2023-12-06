@@ -1,13 +1,28 @@
 #include <Wire.h>
 byte data[4] = {0,0,0,30};
 
-String submode = "startup"
+String submode = "startup";
 
-boolean freeMap[] = {false,false,false,false};
+int inputWDT = 3600000;
+
+boolean freeMap[4] = {false,false,false,false};
+const boolean FREE[4] = {true,true,true,true};
+const boolean SAD[4] = {true,true,true,true};
 
 int SensorWDT = 0;
 int MotorWDT = 0;
 int TelemWDT = 0;
+
+int dist_fwd = 0;
+int dist_left = 0;
+int dist_right = 0;
+int dist_back = 0;
+
+
+int inputFWD = 0;
+int inputSIDE = 0;
+int inputROT = 0;
+int inputMULT = 0;
 
 int eurobeatCountdown = -1;  //DONT ASK
 
@@ -22,7 +37,7 @@ int motorROT = 0;
 int motorSIDE = 0;
 int motorMULT = 0;
 
-
+long start = millis();
 
 int DebugLevel = 4; //    -1 - 4 
 String Mode = "IDLE";
@@ -77,9 +92,9 @@ void loop() {
             motorROT = 0;
             motorSIDE = 0;
                      //fwd, back,left,right
-            freeMap = {true,true,true,true};
+            setFreeMap(FREE);
             ezmap();
-            if(freeMap == {false,false,false,false}){
+            if(freeMap == SAD){
                 submode = "sad";
             }else{
                 submode = "check";
@@ -99,7 +114,7 @@ void loop() {
             
         }else if(submode.equals("check")){
             #define rotTime 2000
-            freeMap = {true,true,true,true};
+            setFreeMap(FREE);
             if(millis()<start+rotTime){
                 motorFWD = 0;
                 motorMULT = 10;
@@ -115,7 +130,7 @@ void loop() {
         }else if(submode.equals("honk")){
             
         }else if(submode.equals("sad")){
-            playingsound("sad");
+            //playingsound("sad");
         }else if(submode.equals("a")){
             
         }else if(submode.equals("a")){
@@ -184,15 +199,22 @@ boolean setMotorSpeeds(){
     return true;
 }
 
+boolean setFreeMap(boolean in[4]){
+    for(int i = 0; i<4;i++){
+        freeMap[i] = in[i];
+    }
+}
 
 
 boolean getSensorVals(){
-    Wire.requestFrom(0x02, 1);
-	while(Wire.available()){
-		char c=Wire.read();
-    }
+    Wire.requestFrom(0x02, 4);
+    dist_fwd = Wire.read();
+    dist_back = Wire.read();
+    dist_left = Wire.read();
+    dist_right = Wire.read();
     return false;
 }
+
 
 
 boolean equals(String a, String b){ //IT IS I ; MEGAMIND; AND I AM TOO LAZY TO FIX MISTKAES
@@ -223,7 +245,7 @@ void HandleSerialIn(String Message){
         }
         if(Val1.equals("Mode")){
             Mode = Val2;
-            submode = "startup"
+            submode = "startup";
         }
     }
 
