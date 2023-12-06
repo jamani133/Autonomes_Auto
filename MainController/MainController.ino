@@ -1,9 +1,11 @@
 #include <Wire.h>
+//#include <Adafruit_NeoPixel.h>
 byte data[4] = {0,0,0,30};
 
 String submode = "startup";
 
 int inputWDT = 3600000;
+//Adafruit_NeoPixel pixels = Adafruit_NeoPixel(4, 12, NEO_GRB + NEO_KHZ800);
 
 boolean freeMap[4] = {false,false,false,false};
 const boolean FREE[4] = {true,true,true,true};
@@ -40,7 +42,7 @@ int motorMULT = 0;
 long start = millis();
 
 int DebugLevel = 4; //    -1 - 4 
-String Mode = "IDLE";
+String Mode = "RAMPAGE";
 
 
 void DevLog(String Message,String Origin, int level = 1){
@@ -136,7 +138,7 @@ void loop() {
         }else if(submode.equals("a")){
             
         }else{
-            DevLog("no valid submode detected","AUTO_MODE",1);
+            DevLog("no valid submode detected","AUTO_MODE",3);
         }
     }else if(Mode == "MANUAL"){
         motorFWD = 128;
@@ -155,8 +157,10 @@ void loop() {
             motorSIDE = 0;
         }
     }else if(Mode == "RAMPAGE"){
-        motorMULT = 255;
-        ezmap();
+        motorFWD = 0;
+        motorMULT = 0;
+        motorROT = 127;
+        motorSIDE = 40;
     }
 
 
@@ -192,9 +196,9 @@ boolean setMotorSpeeds(){
     Wire.beginTransmission(0x01);
     Wire.write(data,4);
     Wire.endTransmission();
-    Serial.println("sending...");
-    Serial1.println();
-    DevLog("0:"+String(data[0])+" 1:"+String(data[1])+" 2:"+String(data[2])+" 3:"+String(data[3]),"I²C TEST",4);
+    //Serial.println("sending...");
+    //Serial1.println();
+    //DevLog("0:"+String(data[0])+" 1:"+String(data[1])+" 2:"+String(data[2])+" 3:"+String(data[3]),"I²C TEST",4);
 
     return true;
 }
@@ -252,16 +256,16 @@ void HandleSerialIn(String Message){
 
     if(Operator.equals("get")){
         if(Val1.equals("DebugLevel")){
-            DevLog("DebugLevel is "+String(DebugLevel),"cnsl_get",0);
+            DevLog("DebugLevel is "+String(DebugLevel),"cnsl_get",4);
         }
         if(Val1.equals("MotorTime")){
-            DevLog("MotorTime is "+String(motorTimeMax),"cnsl_get",0);
+            DevLog("MotorTime is "+String(motorTimeMax),"cnsl_get",4);
         }
         if(Val1.equals("SensorTime")){
-            DevLog("SensorTime is "+String(sensorTimeMax),"cnsl_get",0);
+            DevLog("SensorTime is "+String(sensorTimeMax),"cnsl_get",4);
         }
         if(Val1.equals("Mode")){
-            DevLog("Mode is "+String(Mode),"cnsl_get",0);
+            DevLog("Mode is "+String(Mode),"cnsl_get",4);
         }
     }
 }
