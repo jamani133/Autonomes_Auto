@@ -1,11 +1,11 @@
 #include <Wire.h>
-//#include <Adafruit_NeoPixel.h>
+#include <Adafruit_NeoPixel.h>
 byte data[4] = {0,0,0,30};
 
 String submode = "startup";
 
 int inputWDT = 3600000;
-//Adafruit_NeoPixel pixels = Adafruit_NeoPixel(4, 12, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(4, 12, NEO_GRB + NEO_KHZ800);
 
 boolean freeMap[4] = {false,false,false,false};
 const boolean FREE[4] = {true,true,true,true};
@@ -46,17 +46,17 @@ String Mode = "RAMPAGE";
 
 void allowDir(String dir){
     if(dir.equals("none")){
-        allow[0] = "";
-        allow[1] = "";
-        allow[2] = "";
-        allow[3] = "";
+        allowed[0] = "";
+        allowed[1] = "";
+        allowed[2] = "";
+        allowed[3] = "";
         return;
     }
     for(int i = 0;i<4;i++){
-        if(allow[i].equals("")){
-            allow[i] = dir;
+        if(allowed[i].equals("")){
+            allowed[i] = dir;
             return;
-        }else if(allow[i].equals(dir)){
+        }else if(allowed[i].equals(dir)){
             return;
         }
     }
@@ -75,6 +75,8 @@ void DevLog(String Message,String Origin, int level = 1){
 
 
 void setup() {
+  pixels.begin();
+  pixels.show();
   Wire.begin();
   Serial.begin(115200);
   Serial1.begin(115200);
@@ -143,7 +145,7 @@ void loop() {
                 motorSIDE = 0;
                 ezmap();
             }
-            submode = "decide"
+            submode = "decide";
         }else if(submode.equals("honk")){
             //honk
         }else if(submode.equals("sad")){
@@ -169,7 +171,7 @@ void loop() {
                 if(n == 0){
                     submode = "sad";
                 }else{
-                    submode = allow[random(n-1)];
+                    submode = allowed[random(n-1)];
                 }
             }
         }else if(submode.equals("a")){
@@ -208,6 +210,8 @@ void loop() {
             MotorWDT = 0;
         }
     }
+    pixels.fill(pixels.Color(8,0,8));
+    pixels.show();
 }
 
 void ezmap(){
