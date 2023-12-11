@@ -2,9 +2,9 @@
 //#include "speedRamp.ino"
 #include "Wire.h"  //i2c shit
 
-int FWD[]  = { 1, 1, -1, -1};
-int SIDE[] = {-1, 1, -1,  1}; //what even is this
-int ROT[]  = { 1,-1, -1,  1};
+int FWD[]  = { 1, 1, 1,-1};
+int SIDE[] = { 1,-1,-1,-1}; //what even is this
+int ROT[]  = { 1,-1, 1, 1};
 //VL VR HR HL
 
 int wheelFreq[] = {0,0,0,0};  //rad schnell zahl dngs keine ahnung ic hhab zu viel monster energy getrunken ich kann micht nicht dran erinnern

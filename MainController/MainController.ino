@@ -42,7 +42,7 @@ int motorMULT = 0;
 long start = millis();
 
 int DebugLevel = 4; //    -1 - 4 
-String Mode = "RAMPAGE";
+String Mode = "IDLE";
 
 void allowDir(String dir){
     if(dir.equals("none")){
@@ -65,7 +65,7 @@ void allowDir(String dir){
 
 void DevLog(String Message,String Origin, int level = 1){
     if(level >= DebugLevel){
-        const String Codes[] = {"FORCED","ERROR","WARNING","SUCCESS","STATE"};
+        const String Codes[] = {"FORCED","ERROR","WARNING","SUCCESS","CONSOLE"};
         String ErrorCode = Codes[level];
         String msg = Origin+": "+ErrorCode+" -> "+Message;
         Serial1.print(msg);  //MotorCalc: ERROR -> NullPointerException
@@ -90,10 +90,12 @@ void loop() {
     loopMarker = millis();
     
     if(Serial1.available()){
-        HandleSerialIn(Serial1.readString());
+        String msgi = Serial1.readString();
+        HandleSerialIn(msgi);
     }
     if(Serial.available()){
-        HandleSerialIn(Serial.readString());
+        String msgi = Serial.readString();
+        HandleSerialIn(msgi);
     }
 
     SensorWDT += LoopTime;
@@ -109,6 +111,7 @@ void loop() {
         motorROT = 0;
         motorSIDE = 0;
     }else if(Mode == "AUTO"){
+        Serial1.println(submode);
         if(submode.equals("startup")){
             motorFWD = 0;
             motorROT = 0;
@@ -123,7 +126,7 @@ void loop() {
                 start = millis();
             }
         }else if(submode.equals("forward")){
-            
+           
         }else if(submode.equals("backup")){
 
         }else if(submode.equals("left")){
@@ -135,17 +138,24 @@ void loop() {
             setFreeMap(FREE);
             if(millis()<start+rotTime){
                 motorFWD = 0;
-                motorMULT = 10;
+                motorMULT = 20;
                 motorROT = -64;
                 motorSIDE = 0;
-            }else if(millis()<start+(rotTime*3000)){
+            }else if(millis()<start+(rotTime*3)){
                 motorFWD = 0;
-                motorMULT = 10;
+                motorMULT = 20;
                 motorROT = 64;
                 motorSIDE = 0;
                 ezmap();
+            }else if(millis()<start+(rotTime*4)){
+                motorFWD = 0;
+                motorMULT = 20;
+                motorROT = -64;
+                motorSIDE = 0;
+                
+            }else if(millis()<start+(rotTime*5)){
+                submode = "decide";
             }
-            submode = "decide";
         }else if(submode.equals("honk")){
             //honk
         }else if(submode.equals("sad")){
@@ -195,10 +205,55 @@ void loop() {
             motorROT = 0;
             motorSIDE = 0;
         }
-    }else if(Mode == "RAMPAGE"){
+    }else if(Mode == "RAMPAGE1"){
         motorFWD = 0;
-        motorMULT = 30;
+        motorMULT = 255;
         motorROT = 127;
+        motorSIDE = 0;
+    }else if(Mode == "RAMPAGE2"){
+        motorFWD = 0;
+        motorMULT = 127;
+        motorROT = 127;
+        motorSIDE = 0;
+    }else if(Mode == "RAMPAGE3"){
+        motorFWD = 0;
+        motorMULT = 127;
+        motorROT = 90;
+        motorSIDE = 90;
+    }else if(Mode == "RAMPAGE4"){
+        motorFWD = 90;
+        motorMULT = 127;
+        motorROT = 90;
+        motorSIDE = 0;
+    }else if(Mode == "fwd"){
+        motorFWD = 127;
+        motorMULT = 255;
+        motorROT = 0;
+        motorSIDE = 0;
+    }else if(Mode == "left"){
+        motorFWD = 0;
+        motorMULT = 255;
+        motorROT = 0;
+        motorSIDE = -127;
+    }else if(Mode == "right"){
+        motorFWD = 0;
+        motorMULT = 255;
+        motorROT = 0;
+        motorSIDE = 127;
+    }else if(Mode == "back"){
+        motorFWD = -127;
+        motorMULT = 255;
+        motorROT = 0;
+        motorSIDE = 0;
+    }else if(Mode == "rleft"){
+        motorFWD = 0;
+        motorMULT = 255;
+        motorROT = -127;
+        motorSIDE = 0;
+    }else if(Mode == "rright"){
+        motorFWD = 0;
+        motorMULT = 255;
+        motorROT = 255;
         motorSIDE = 0;
     }
 
@@ -273,23 +328,40 @@ boolean equals(String a, String b){ //IT IS I ; MEGAMIND; AND I AM TOO LAZY TO F
 //4 : states
 
 void HandleSerialIn(String Message){
-    String Operator = "";//split(Message," ",0);
+    int whyudick = Message.length();
+    Message[whyudick-1] = '\0';
+    Serial1.println(Message);
+    Serial.println(Message);
+    Mode = Message;
+}
+/*
+void HandleSerialIn(char[] Message){
+    int whyudick = strlen(Message);
+    Message[whyudick-1] = '\0';
+    Serial.println("USER > "+Message);
+    Serial1.println("USER > "+Message);
+    String Operator = split(Message," ",0);
     String Val1 = split(Message," ",1);
     String Val2 = split(Message," ",2);
     String Val3 = split(Message," ",3);
+    Serial.println(Operator+","+Val1+","+Val2+","+Val3);
 
     if(Operator.equals("set")){
         if(Val1.equals("DebugLevel")){
             DebugLevel = Val2.toInt();
+            DevLog("ok","cnsl_set",4);
         }
         if(Val1.equals("MotorTime")){
             motorTimeMax = Val2.toInt();
+            DevLog("ok","cnsl_set",4);
         }
         if(Val1.equals("SensorTime")){
             sensorTimeMax = Val2.toInt();
+            DevLog("ok","cnsl_set",4);
         }
         if(Val1.equals("Mode")){
             Mode = Val2;
+            DevLog("ok","cnsl_set",4);
             submode = "startup";
         }
     }
@@ -309,7 +381,7 @@ void HandleSerialIn(String Message){
             DevLog("Mode is "+String(Mode),"cnsl_get",4);
         }
     }
-}
+}*/
 
 
 
