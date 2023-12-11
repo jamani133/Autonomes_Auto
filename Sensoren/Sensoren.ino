@@ -58,7 +58,7 @@ void loop() {
     if(tentfernung1 > 150){
         tentfernung1 = 150;
     }
-    if (wdt1 >= 4 || (tentfernung1 > pentfernung1 - 20 && tentfernung1 < pentfernung1 + 20 )) { //oke
+    if (wdt1 >= 6 || (tentfernung1 > pentfernung1 - 20 && tentfernung1 < pentfernung1 + 20 )) { //oke
       entfernung1 = (0.5 * entfernung1) + (0.5 * tentfernung1);
       wdt1 = 0;
       pentfernung1 = entfernung1;
@@ -80,7 +80,7 @@ void loop() {
     if(tentfernung2 > 150){
         tentfernung2 = 150;
     }
-    if (wdt2 >= 4 || (tentfernung2 > pentfernung2 - 20 && tentfernung2 < pentfernung2 + 20 )) { //oke
+    if (wdt2 >= 6 || (tentfernung2 > pentfernung2 - 20 && tentfernung2 < pentfernung2 + 20 )) { //oke
       entfernung2 = (0.5 * entfernung2) + (0.5 * tentfernung2);
       wdt2 = 0;
       pentfernung2 = entfernung2;
@@ -102,7 +102,7 @@ void loop() {
     if(tentfernung3 > 150){
         tentfernung3 = 150;
     }
-    if (wdt3 >= 4 || (tentfernung3 > pentfernung3 - 20 && tentfernung3 < pentfernung3 + 20 )) { //oke
+    if (wdt3 >= 6 || (tentfernung3 > pentfernung3 - 20 && tentfernung3 < pentfernung3 + 20 )) { //oke
       entfernung3 = (0.5 * entfernung3) + (0.5 * tentfernung3);
       wdt3 = 0;
       pentfernung3 = entfernung3;
@@ -124,7 +124,7 @@ void loop() {
     if(tentfernung4 > 150){
         tentfernung4 = 150;
     }
-    if (wdt4 >= 4 || (tentfernung4 > pentfernung4 - 20 && tentfernung4 < pentfernung4 + 20 )) { //oke
+    if (wdt4 >= 6 || (tentfernung4 > pentfernung4 - 20 && tentfernung4 < pentfernung4 + 20 )) { //oke
       entfernung4 = (0.5 * entfernung4) + (0.5 * tentfernung4);
       wdt4 = 0;
       pentfernung4 = entfernung4;
