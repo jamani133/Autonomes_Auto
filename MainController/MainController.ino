@@ -265,7 +265,10 @@ void loop() {
             MotorWDT = 0;
         }
     }
-    pixels.fill(pixels.Color(8,0,8));
+    pixels.setPixelColor(0,pixels.Color(255,255,255));
+    pixels.setPixelColor(1,pixels.Color(255,255,255));
+    pixels.setPixelColor(2,pixels.Color(255,0,0));
+    pixels.setPixelColor(3,pixels.Color(255,0,0));
     pixels.show();
 }
 

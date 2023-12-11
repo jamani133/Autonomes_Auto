@@ -2,9 +2,9 @@
 //#include "speedRamp.ino"
 #include "Wire.h"  //i2c shit
 
-int FWD[]  = { 1, 1, 1,-1};
-int SIDE[] = { 1,-1,-1,-1}; //what even is this
-int ROT[]  = { 1,-1, 1, 1};
+int FWD[]  = { -1, -1, -1,-1};
+int SIDE[] = { 1,-1,-1,1}; //what even is this
+int ROT[]  = { -1,1, -1, -1};
 //VL VR HR HL
 
 int wheelFreq[] = {0,0,0,0};  //rad schnell zahl dngs keine ahnung ic hhab zu viel monster energy getrunken ich kann micht nicht dran erinnern
@@ -66,7 +66,7 @@ void onWire(int num){
                 bROT = Wire.read(); //FUCK
             break;
             case 3: 
-                bMULT = Wire.read(); //IS
+                bMULT = Wire.read()*16; //IS
             break;
         }
         if(Boobies > 3){Wire.read();}  //THIS????

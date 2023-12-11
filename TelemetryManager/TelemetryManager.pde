@@ -1,67 +1,44 @@
-import porocessing.serial.*;
+import processing.serial.*;
 
-Serial telem = new Serial();
 
-Serial[] varNames;
-Serial[] varVals;
-Serial[] varWDT;
+Serial telem;
+
+boolean prev;
 
 
 void setup(){
-    size(1024,720);
-    connect();
+    size(240,240);
+    telem = new Serial(this, Serial.list()[0], 115200);
+    printArray(Serial.list());
 }
 void draw(){
     background(0);
-    if(Serial.available()){
-        String inputString = readStringUntil("\n");
-        readVars(inputString);
-    }
-}
-
-
-void connect(){
-    boolean connected = false;
-    while(!connected){
-
-    }
-}
-
-void readVars(String input){
-    if(input == null || input == "" || input == "\n"){
-        return;
-    }
-    String[] varBlocks = input.split("|");
-    if (varBlocks.length == 0){
-        return;
+    if(telem.available() > 0){
+      print(telem.readString());
     }
     
-    for(int i = 0; i < varBlock.lenght ; i++){
-
+    if(keyPressed && !prev){
+        if(key == 'w'){
+            telem.write("fwd\n");
+        }
+        if(key == 'a'){
+            telem.write("rleft\n");
+        }
+        if(key == 's'){
+            telem.write("back\n");
+        }
+        if(key == 'd'){
+            telem.write("rright\n");
+        }
+        if(key == 'e'){
+            telem.write("right\n");
+        }
+        if(key == 'q'){
+            telem.write("left\n");
+        }
+        if(key == 'x'){
+            telem.write("IDLE\n");
+        }
     }
-}
-
-
-
-
-boolean Button(String text,int posX,int posY,int wid,int hei){
-    rect(posX,posY,wid,hei);
-    textAlign(CENTER);
-    text(text,posX+(wid/2),posY+(hei/2));
-    if(!mousePressed){
-        return false;
-    }
-    if(posX > mouseX){
-        return false;
-    }
-    if(posX+wid < mouseX){
-        return false;
-    }
-    if(posY > mouseY){
-        return false;
-    }
-    if(posY+hei < mouseY){
-        return false;
-    }
-    return true;
+    prev = keyPressed;
 }
