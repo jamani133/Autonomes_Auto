@@ -447,7 +447,7 @@ String split(String s, char parser, int index) {        //I STOLE THIS CODE
   }                                                     //I STOLE THIS CODE
   return rs;                                            //I STOLE THIS CODE
 }                                                       //I STOLE THIS CODE
-
+/*
 int Geschwindigkeit(int distanz, int baseVal){
     #define minDist 10 //cm
     #define maxDist 50 //cm
@@ -461,5 +461,5 @@ int Geschwindigkeit(int distanz, int baseVal){
         return 0;
     }
     return DIR * constrain(( map(distanz , minDist, maxSpeed, maxSpeed) * baseVal) / 100, minSpeed, maxSpeed);
-}
+}*/
 
