@@ -27,7 +27,7 @@ int inputROT = 0;
 int inputMULT = 0;
 
 int eurobeatCountdown = -1;  //DONT ASK
-String allowed[4] = {"","","",""};
+String allowed[4] = {"","","","","",""};
 int sensorTimeMax = 100;
 int  motorTimeMax = 100; 
 
@@ -126,13 +126,37 @@ void loop() {
                 start = millis();
             }
         }else if(submode.equals("forward")){
-           
+           if(dist_fwd > 10){
+                motorFWD = 127;
+                motorROT = 0;
+                motorSIDE = 0;
+           }else{
+                submode = "check";
+           }
         }else if(submode.equals("backup")){
-
+           if(dist_back > 10){
+                motorFWD = -127;
+                motorROT = 0;
+                motorSIDE = 0;
+           }else{
+                submode = "check";
+           }
         }else if(submode.equals("left")){
-            
+            if(dist_left > 10){
+                motorFWD = 0;
+                motorROT = 0;
+                motorSIDE = -127;
+           }else{
+                submode = "check";
+           }
         }else if(submode.equals("right")){
-            
+            if(dist_fwd > 10){
+                motorFWD = 0;
+                motorROT = 0;
+                motorSIDE = 127;
+           }else{
+                submode = "check";
+           }
         }else if(submode.equals("check")){
             #define rotTime 2000
             setFreeMap(FREE);
@@ -156,6 +180,22 @@ void loop() {
             }else if(millis()<start+(rotTime*5)){
                 submode = "decide";
             }
+        }else if(submode.equals("left_rot")){
+            if(start+2000 < millis()){
+                motorFWD = 0;
+                motorROT = -64;
+                motorSIDE = 0;
+            }else{
+                submode = "forward";
+            }
+        }else if(submode.equals("right_rot")){
+            if(start+2000 < millis()){
+                motorFWD = 0;
+                motorROT = 64;
+                motorSIDE = 0;
+            }else{
+                submode = "forward";
+            }
         }else if(submode.equals("honk")){
             //honk
         }else if(submode.equals("sad")){
@@ -172,16 +212,19 @@ void loop() {
                 }
                 if(freeMap[2]){
                     allowDir("left");
-                    n++;
+                    allowDir("left_rot");
+                    n += 2;
                 }
                 if(freeMap[3]){
                     allowDir("right");
-                    n++;
+                    allowDir("right_rot");
+                    n += 2;
                 }
                 if(n == 0){
                     submode = "sad";
                 }else{
                     submode = allowed[random(n-1)];
+                    start = millis();
                 }
             }
         }else if(submode.equals("a")){
@@ -405,5 +448,18 @@ String split(String s, char parser, int index) {        //I STOLE THIS CODE
   return rs;                                            //I STOLE THIS CODE
 }                                                       //I STOLE THIS CODE
 
-
+int Geschwindigkeit(int distanz, int baseVal){
+    #define minDist 10 //cm
+    #define maxDist 50 //cm
+    #define minSpeed 1 //% von baseVal
+    #define maxSpeed 100 //% von bseVal
+    int8_t DIR = 1;
+    if(baseVal < 0){
+        DIR = -1;
+    }
+    if(baseVal == 0){
+        return 0;
+    }
+    return DIR * constrain(( map(distanz , minDist, maxSpeed, maxSpeed) * baseVal) / 100, minSpeed, maxSpeed);
+}
 
