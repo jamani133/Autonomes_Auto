@@ -162,18 +162,18 @@ void loop() {
             setFreeMap(FREE);
             if(millis()<start+rotTime){
                 motorFWD = 0;
-                motorMULT = 20;
+                motorMULT = 2;
                 motorROT = -64;
                 motorSIDE = 0;
             }else if(millis()<start+(rotTime*3)){
                 motorFWD = 0;
-                motorMULT = 20;
+                motorMULT = 2;
                 motorROT = 64;
                 motorSIDE = 0;
                 ezmap();
             }else if(millis()<start+(rotTime*4)){
                 motorFWD = 0;
-                motorMULT = 20;
+                motorMULT = 2;
                 motorROT = -64;
                 motorSIDE = 0;
                 
@@ -201,6 +201,10 @@ void loop() {
         }else if(submode.equals("sad")){
             //playingsound("sad");
         }else if(submode.equals("decide")){
+                motorFWD = 0;
+                motorMULT = 0;
+                motorROT = 0;
+                motorSIDE = 0;
             if(freeMap[0]){
                 submode = "forward";
             }else{
@@ -430,8 +434,6 @@ void HandleSerialIn(char[] Message){
 }*/
 
 
-
-	
 String split(String s, char parser, int index) {        //I STOLE THIS CODE
   String rs="";                                         //I STOLE THIS CODE
   int parserIndex = index;                              //I STOLE THIS CODE
