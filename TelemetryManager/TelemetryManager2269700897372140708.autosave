@@ -17,15 +17,15 @@ void setup(){
 }
 void draw(){
     background(0);
-    image(graphic,250,10);
+    image(graphic,120,0);
     
     textSize(30);
     fill(255,160,0);
-    text("Dashboard V1.2\n---------------------",30,60);
+    text("Dashboard V1.2\n---------------",30,30);
 
     textSize(20);
     fill(0,255,0);
-    text("Mode: "+lastCmd+"\nlast Response:"+LastResponse,30,120);
+    text("Mode: "+lastCmd+"\nlast Response:"+LastResponse,30,90);
 
     if(telem.available() > 0){
       LastResponse = telem.readString();
