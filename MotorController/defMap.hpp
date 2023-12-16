@@ -3,7 +3,7 @@
 #define MOTOR_ENABLE 12
 
 const int MOTOR_STEP[] = {10,9,6,2};
-const int MOTOR_DIR[] = {11,8,7,4};
+const int MOTOR_DIR[] = {11,8,7,3};
 
 
 
