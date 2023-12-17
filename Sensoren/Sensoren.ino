@@ -153,14 +153,11 @@ void loop() {
 
 
 void requestEvent() {		//Read = anforderung vom Main
-  byte c = Wire.read();
-  
   Serial.println("pinged");
-  Wire.write(byte(constrain(entfernung1,0,255)));
-  Wire.write(byte(constrain(entfernung2,0,255)));
-  Wire.write(byte(constrain(entfernung3,0,255)));
-  Wire.write(byte(constrain(entfernung4,0,255)));
-  
+  Wire.write((byte)constrain(entfernung1,0,255));
+  Wire.write((byte)constrain(entfernung2,0,255));
+  Wire.write((byte)constrain(entfernung3,0,255));
+  Wire.write((byte)constrain(entfernung4,0,255));
 }
 
 

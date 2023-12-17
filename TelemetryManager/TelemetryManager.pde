@@ -33,27 +33,34 @@ void draw(){
     fill(0,255,0);
     text("Mode: "+Mode+"\nsubMode:"+subMode+"\nlast Recieved:"+lastRes,30,120);
     fill(0,255,255);
-    text("Left : "+dist_l+" cm\nRight: "+dist_r+" cm\nFWD  : "+dist_f+" cm\nBack : "+dist_b+" cm\n",30,200);
+    text("Left   : "+dist_l+" cm\nRight: "+dist_r+" cm\nFWD  : "+dist_f+" cm\nBack : "+dist_b+" cm\n",30,200);
 
     if(telem.available() > 0){
+      
       String msg = telem.readString();
+      println(msg);
       String vals[] = msg.split("#");
+      
       for(int i = 0; i < vals.length; i++){
         String secs[] = vals[i].split(":");
-        if(secs[0] == "SM"){
+        try{
+        if(secs[0].equals("SM")){
             subMode = secs[1];
-        }else if(secs[0] == "M"){
+        }else if(secs[0].equals("M")){
             Mode = secs[1];
-        }else if(secs[0] == "DF"){
+        }else if(secs[0].equals("DF")){
             dist_f = secs[1];
-        }else if(secs[0] == "DB"){
+        }else if(secs[0].equals("DB")){
             dist_b = secs[1];
-        }else if(secs[0] == "DL"){
+        }else if(secs[0].equals("DL")){
             dist_l = secs[1];
-        }else if(secs[0] == "DR"){
+        }else if(secs[0].equals("DR")){
             dist_r = secs[1];
-        }else if(secs[0] == "LR"){
+        }else if(secs[0].equals("LR")){
             lastRes = secs[1];
+        }
+        }catch(Exception e){
+          println("an error occured");
         }
         
       }

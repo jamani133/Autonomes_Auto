@@ -100,9 +100,9 @@ void loop() {
 
     SensorWDT += LoopTime;
     if(SensorWDT > sensorTimeMax){
-        if(getSensorVals()){
-            SensorWDT = 0;
-        }
+        getSensorVals();
+        SensorWDT = 0;
+        
     }
     if(millis() > nextDistLog){
         Serial1.print("M:"+Mode+"#");
@@ -117,7 +117,12 @@ void loop() {
         motorFWD = 0;
         motorROT = 0;
         motorSIDE = 0;
+        pixels.setPixelColor(0,pixels.Color(255,255,255));
+           pixels.setPixelColor(1,pixels.Color(255,255,255));
+           pixels.setPixelColor(2,pixels.Color(255,0,0));
+           pixels.setPixelColor(3,pixels.Color(255,0,0));
     }else if(Mode == "AUTO"){
+        motorMULT = 255;
         if(!submode.equals(prevSM)){
             Serial1.print("SM:"+submode+"#");
         }
@@ -128,119 +133,198 @@ void loop() {
             motorSIDE = 0;
                      //fwd, back,left,right
             setFreeMap(FREE);
-            ezmap();
+            if(dist_back <= 30){
+        freeMap[1] = false;
+        //Serial1.print("LR:back#");
+    }
+    if(dist_fwd <= 30){
+        freeMap[0] = false;
+        //Serial1.print("LR:fwd#");
+    }
+    if(dist_left <= 30){
+        freeMap[2] = false;
+        //Serial1.print("LR:left#");
+    }
+    if(dist_right <= 30){
+        freeMap[3] = false;
+        //Serial1.print("LR:right#");
+    }
             if(freeMap == SAD){
                 submode = "sad";
             }else{
                 submode = "check";
                 start = millis();
+                setFreeMap(FREE);
             }
+            delay(100);
         }else if(submode.equals("forward")){
-           if(dist_fwd > 10){
+           if(dist_fwd > 20){
                 motorFWD = 127;
                 motorROT = 0;
                 motorSIDE = 0;
            }else{
+                motorFWD = 0;
+                motorROT = 0;
+                motorSIDE = 0;
                 submode = "check";
+                start = millis();
+                setFreeMap(FREE);
            }
+           pixels.setPixelColor(0,pixels.Color(255,255,255));
+           pixels.setPixelColor(1,pixels.Color(255,255,255));
+           pixels.setPixelColor(2,pixels.Color(64,0,0));
+           pixels.setPixelColor(3,pixels.Color(64,0,0));
         }else if(submode.equals("backup")){
-           if(dist_back > 10){
+           if(dist_back > 20){
                 motorFWD = -127;
                 motorROT = 0;
                 motorSIDE = 0;
            }else{
+                motorFWD = 0;
+                motorROT = 0;
+                motorSIDE = 0;
                 submode = "check";
+                start = millis();
+                setFreeMap(FREE);
            }
+           pixels.setPixelColor(0,pixels.Color(0,0,0));
+           pixels.setPixelColor(1,pixels.Color(0,0,0));
+           pixels.setPixelColor(2,pixels.Color(255,0,0));
+           pixels.setPixelColor(3,pixels.Color(255,0,0));
         }else if(submode.equals("left")){
-            if(dist_left > 10){
+            if(dist_left > 20){
                 motorFWD = 0;
                 motorROT = 0;
                 motorSIDE = -127;
            }else{
+                motorFWD = 0;
+                motorROT = 0;
+                motorSIDE = 0;
                 submode = "check";
+                start = millis();
+                setFreeMap(FREE);
            }
         }else if(submode.equals("right")){
-            if(dist_fwd > 10){
+            if(dist_fwd > 20){
                 motorFWD = 0;
                 motorROT = 0;
                 motorSIDE = 127;
            }else{
+                motorFWD = 0;
+                motorROT = 0;
+                motorSIDE = 0;
                 submode = "check";
+                start = millis();
+                setFreeMap(FREE);
            }
         }else if(submode.equals("check")){
             #define rotTime 2000
-            setFreeMap(FREE);
+            
             if(millis()<start+rotTime){
                 motorFWD = 0;
                 motorMULT = 2;
-                motorROT = -64;
+                motorROT = -8;
                 motorSIDE = 0;
             }else if(millis()<start+(rotTime*3)){
                 motorFWD = 0;
                 motorMULT = 2;
-                motorROT = 64;
+                motorROT = 8;
                 motorSIDE = 0;
-                ezmap();
+                if(dist_back <= 30){
+        freeMap[1] = false;
+        //Serial1.print("LR:back#");
+    }
+    if(dist_fwd <= 30){
+        freeMap[0] = false;
+        //Serial1.print("LR:fwd#");
+    }
+    if(dist_left <= 30){
+        freeMap[2] = false;
+        //Serial1.print("LR:left#");
+    }
+    if(dist_right <= 30){
+        freeMap[3] = false;
+        //Serial1.print("LR:right#");
+    }
             }else if(millis()<start+(rotTime*4)){
                 motorFWD = 0;
                 motorMULT = 2;
-                motorROT = -64;
+                motorROT = -8;
                 motorSIDE = 0;
                 
             }else if(millis()<start+(rotTime*5)){
-                submode = "decide";
-            }
-        }else if(submode.equals("left_rot")){
-            if(start+2000 < millis()){
-                motorFWD = 0;
-                motorROT = -64;
-                motorSIDE = 0;
-            }else{
-                submode = "forward";
-            }
-        }else if(submode.equals("right_rot")){
-            if(start+2000 < millis()){
-                motorFWD = 0;
-                motorROT = 64;
-                motorSIDE = 0;
-            }else{
-                submode = "forward";
-            }
-        }else if(submode.equals("honk")){
-            //honk
-        }else if(submode.equals("sad")){
-            //playingsound("sad");
-        }else if(submode.equals("decide")){
-                motorFWD = 0;
-                motorMULT = 0;
-                motorROT = 0;
-                motorSIDE = 0;
+            submode = "sad";
+            Serial1.print("LR:"+String(freeMap[0])+String(freeMap[1])+String(freeMap[2])+String(freeMap[3])+"#");
             if(freeMap[0]){
                 submode = "forward";
             }else{
                 allowDir("none");
                 int n = 0;
+                
                 if(freeMap[1]){
                     allowDir("backup");
                     n++;
                 }
                 if(freeMap[2]){
-                    allowDir("left");
+                    
                     allowDir("left_rot");
-                    n += 2;
+                    n++;
                 }
                 if(freeMap[3]){
-                    allowDir("right");
+                    
                     allowDir("right_rot");
-                    n += 2;
+                    n++;
                 }
-                if(n == 0){
-                    submode = "sad";
-                }else{
+                if(!n == 0){
                     submode = allowed[random(n-1)];
                     start = millis();
                 }
+                getSensorVals();
             }
+            
+            }
+            pixels.setPixelColor(0,pixels.Color(0,255,0));
+           pixels.setPixelColor(1,pixels.Color(0,255,0));
+           pixels.setPixelColor(2,pixels.Color(0,255,0));
+           pixels.setPixelColor(3,pixels.Color(0,255,0));
+        }else if(submode.equals("left_rot")){
+            if(start+1000 < millis()){
+                motorFWD = 0;
+                motorROT = -32;
+                motorSIDE = 0;
+            }else{
+                motorFWD = 0;
+                motorROT = 0;
+                motorSIDE = 0;
+                submode = "forward";
+            }
+            pixels.setPixelColor(0,pixels.Color(0,0,0));
+           pixels.setPixelColor(1,pixels.Color(255,255,0));
+           pixels.setPixelColor(2,pixels.Color(255,255,0));
+           pixels.setPixelColor(3,pixels.Color(0,0,0));
+        }else if(submode.equals("right_rot")){
+            if(start+1000 < millis()){
+                motorFWD = 0;
+                motorROT = 32;
+                motorSIDE = 0;
+            }else{
+                motorFWD = 0;
+                motorROT = 0;
+                motorSIDE = 0;
+                submode = "forward";
+            }
+            pixels.setPixelColor(0,pixels.Color(255,255,0));
+           pixels.setPixelColor(1,pixels.Color(0,0,0));
+           pixels.setPixelColor(2,pixels.Color(0,0,0));
+           pixels.setPixelColor(3,pixels.Color(255,255,0));
+        }else if(submode.equals("honk")){
+            //honk
+        }else if(submode.equals("sad")){
+            //playingsound("sad");
+            pixels.setPixelColor(0,pixels.Color(0,0,255));
+           pixels.setPixelColor(1,pixels.Color(0,0,255));
+           pixels.setPixelColor(2,pixels.Color(0,0,255));
+           pixels.setPixelColor(3,pixels.Color(0,0,255));
         }else if(submode.equals("a")){
             
         }else{
@@ -265,53 +349,77 @@ void loop() {
     }else if(Mode == "RAMPAGE1"){
         motorFWD = 0;
         motorMULT = 255;
-        motorROT = 127;
+        motorROT = 127; //FIDGET SPINNERRRRRRRR
         motorSIDE = 0;
     }else if(Mode == "RAMPAGE2"){
         motorFWD = 0;
-        motorMULT = 127;
-        motorROT = 127;
-        motorSIDE = 0;
+        motorMULT = 127;   //why
+        motorROT = 64;
+        motorSIDE = 127;
     }else if(Mode == "RAMPAGE3"){
         motorFWD = 0;
         motorMULT = 127;
-        motorROT = 90;
+        motorROT = 90;     //ok
         motorSIDE = 90;
     }else if(Mode == "RAMPAGE4"){
         motorFWD = 90;
         motorMULT = 127;
-        motorROT = 90;
+        motorROT = 90;  //what
         motorSIDE = 0;
     }else if(Mode == "fwd"){
         motorFWD = 127;
         motorMULT = 255;
         motorROT = 0;
         motorSIDE = 0;
+        pixels.setPixelColor(0,pixels.Color(255,255,255));
+        pixels.setPixelColor(1,pixels.Color(256,255,255));
+        pixels.setPixelColor(2,pixels.Color(255,0,0));
+        pixels.setPixelColor(3,pixels.Color(255,0,0));
     }else if(Mode == "left"){
         motorFWD = 0;
         motorMULT = 255;
         motorROT = 0;
         motorSIDE = -127;
+        pixels.setPixelColor(0,pixels.Color(0,0,0));
+        pixels.setPixelColor(1,pixels.Color(255,0,0));
+        pixels.setPixelColor(2,pixels.Color(255,0,0));
+        pixels.setPixelColor(3,pixels.Color(0,0,0));
     }else if(Mode == "right"){
         motorFWD = 0;
         motorMULT = 255;
         motorROT = 0;
         motorSIDE = 127;
+        pixels.setPixelColor(0,pixels.Color(255,0,0));
+        pixels.setPixelColor(1,pixels.Color(0,0,0));
+        pixels.setPixelColor(2,pixels.Color(0,0,0));
+        pixels.setPixelColor(3,pixels.Color(255,0,0));
     }else if(Mode == "back"){
         motorFWD = -127;
         motorMULT = 255;
         motorROT = 0;
         motorSIDE = 0;
+        pixels.setPixelColor(0,pixels.Color(0,0,0));
+        pixels.setPixelColor(1,pixels.Color(0,0,0));
+        pixels.setPixelColor(2,pixels.Color(255,0,0));
+        pixels.setPixelColor(3,pixels.Color(255,0,0));
     }else if(Mode == "rleft"){
         motorFWD = 0;
         motorMULT = 255;
         motorROT = -127;
         motorSIDE = 0;
+        pixels.setPixelColor(0,pixels.Color(0,0,0));
+        pixels.setPixelColor(1,pixels.Color(255,255,0));
+        pixels.setPixelColor(2,pixels.Color(0,0,0));
+        pixels.setPixelColor(3,pixels.Color(0,0,0));
     }else if(Mode == "rright"){
         motorFWD = 0;
         motorMULT = 255;
         motorROT = 255;
         motorSIDE = 0;
+        pixels.setPixelColor(0,pixels.Color(255,255,0));
+        pixels.setPixelColor(1,pixels.Color(0,0,0));
+        pixels.setPixelColor(2,pixels.Color(0,0,0));
+        pixels.setPixelColor(3,pixels.Color(0,0,0));
     }
 
 
@@ -322,31 +430,18 @@ void loop() {
             MotorWDT = 0;
         }
     }
-    pixels.setPixelColor(0,pixels.Color(255,255,255));
-    pixels.setPixelColor(1,pixels.Color(255,255,255));
-    pixels.setPixelColor(2,pixels.Color(255,0,0));
-    pixels.setPixelColor(3,pixels.Color(255,0,0));
+    //pixels.setPixelColor(0,pixels.Color(255,255,255));
+    //pixels.setPixelColor(1,pixels.Color(255,255,255));
+    //pixels.setPixelColor(2,pixels.Color(255,0,0));
+    //pixels.setPixelColor(3,pixels.Color(255,0,0));
     pixels.show();
 }
 
-void ezmap(){
-    if(dist_back <= 20){
-        freeMap[1] = false;
-    }
-    if(dist_fwd <= 20){
-        freeMap[0] = false;
-    }
-    if(dist_left <= 20){
-        freeMap[2] = false;
-    }
-    if(dist_right <= 20){
-        freeMap[3] = false;
-    }
-}
+
 
 boolean setMotorSpeeds(){
     data[0] = motorFWD+127;
-    data[1] = motorSIDE+127;
+    data[1] = motorSIDE+127;  //ye idk
     data[2] = motorROT+127;
     data[3] = motorMULT;
     //Serial1.print("LR:setMotors#");
@@ -368,13 +463,19 @@ boolean setFreeMap(boolean in[4]){
 
 
 boolean getSensorVals(){
-    Wire.requestFrom(2, 4);
+    Serial.println("PINGED FOR SESNSORS YOU DIRTY FUCKING SLUT OF A PIG");
+    //while(Wire.available()){
+    //    Wire.read();   //flush i2c buffer
+    //}
+    Wire.requestFrom(2, 4, true);
+    //while(Wire.available() == 0){} //wait until recieved, not very gud, and can crahs, but idc
     //Serial1.print("LR:pingedForSensors#");
+    
     dist_fwd = Wire.read();
-    dist_back = Wire.read();
+    dist_back = Wire.read();  //read shit value stuff idk
     dist_left = Wire.read();
     dist_right = Wire.read();
-    return false;
+    return false; //dummy bc idk
 }
 
 
@@ -394,7 +495,7 @@ void HandleSerialIn(String Message){
     Message[whyudick-1] = '\0';
     Serial1.println("LR:"+Message+"#");
     Serial.println(Message);
-    Mode = Message;
+    Mode = Message;   //this is not good, but no language on earth has a word for how little i care, a quantum supercomuter calculating for a thousand years could not even aproach the number of fucks i do not give
     submode = "startup";
     prevSM = "a";
 }
