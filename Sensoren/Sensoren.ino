@@ -41,8 +41,9 @@ int tentfernung4 = 0;
 
 void setup() {
   Serial1.begin (115200);
+  Serial.begin (115200);
   configurePins();
-  Wire.begin(0x02);
+  Wire.begin(2);
   Wire.onRequest(requestEvent);
 }
 
@@ -145,7 +146,7 @@ void loop() {
   Serial1.print(entfernung3);
   Serial1.print(",UD:");
   Serial1.println(entfernung4);
-
+  Serial.println("why");
   
 
 }
@@ -153,12 +154,13 @@ void loop() {
 
 void requestEvent() {		//Read = anforderung vom Main
   byte c = Wire.read();
-  if (c == 4) {
-    Wire.write(entfernung1);
-    Wire.write(entfernung2);
-    Wire.write(entfernung3);
-    Wire.write(entfernung4);
-  }
+  
+  Serial.println("pinged");
+  Wire.write(byte(constrain(entfernung1,0,255)));
+  Wire.write(byte(constrain(entfernung2,0,255)));
+  Wire.write(byte(constrain(entfernung3,0,255)));
+  Wire.write(byte(constrain(entfernung4,0,255)));
+  
 }
 
 

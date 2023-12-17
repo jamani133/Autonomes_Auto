@@ -1,6 +1,6 @@
 {
     "board": "arduino:megaavr:nona4809",
-    "port": "COM13",
+    "port": "COM17",
     "programmer": "arduino:medbg",
-    "sketch": "MotorController\\MotorController.ino"
+    "sketch": "Sensoren\\Sensoren.ino"
 }

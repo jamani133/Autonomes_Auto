@@ -2,15 +2,21 @@ import processing.serial.*;
 
 
 Serial telem;
-
+String subMode = "-";
+String Mode = "-";
+String dist_f = "-";
+String dist_r = "-";
+String dist_l = "-";
+String dist_b = "-";
+String lastRes = "-";
 boolean prev;
-String LastResponse = "";
-String lastCmd = "";
+String LastResponse = "-";
+String lastCmd = "-";
 
 PImage graphic = new PImage();
 
 void setup(){
-    size(900,700);
+    size(600,310);
     telem = new Serial(this, Serial.list()[0], 115200);
     printArray(Serial.list());
     graphic = loadImage("IDLE.png");
@@ -21,15 +27,36 @@ void draw(){
     
     textSize(30);
     fill(255,160,0);
-    text("Dashboard V1.2\n---------------------",30,60);
+    text("Dashboard V1.4\n---------------------",30,60);
 
     textSize(20);
     fill(0,255,0);
-    text("Mode: "+lastCmd+"\nlast Response:"+LastResponse,30,120);
+    text("Mode: "+Mode+"\nsubMode:"+subMode+"\nlast Recieved:"+lastRes,30,120);
+    fill(0,255,255);
+    text("Left : "+dist_l+" cm\nRight: "+dist_r+" cm\nFWD  : "+dist_f+" cm\nBack : "+dist_b+" cm\n",30,200);
 
     if(telem.available() > 0){
-      LastResponse = telem.readString();
-      print(LastResponse);
+      String msg = telem.readString();
+      String vals[] = msg.split("#");
+      for(int i = 0; i < vals.length; i++){
+        String secs[] = vals[i].split(":");
+        if(secs[0] == "SM"){
+            subMode = secs[1];
+        }else if(secs[0] == "M"){
+            Mode = secs[1];
+        }else if(secs[0] == "DF"){
+            dist_f = secs[1];
+        }else if(secs[0] == "DB"){
+            dist_b = secs[1];
+        }else if(secs[0] == "DL"){
+            dist_l = secs[1];
+        }else if(secs[0] == "DR"){
+            dist_r = secs[1];
+        }else if(secs[0] == "LR"){
+            lastRes = secs[1];
+        }
+        
+      }
     }
     
     if(keyPressed && !prev){

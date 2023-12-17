@@ -25,12 +25,12 @@ int inputFWD = 0;
 int inputSIDE = 0;
 int inputROT = 0;
 int inputMULT = 0;
-
+long nextDistLog = 0;
 int eurobeatCountdown = -1;  //DONT ASK
-String allowed[4] = {"","","","","",""};
+String allowed[6] = {"","","","","",""};
 int sensorTimeMax = 100;
 int  motorTimeMax = 100; 
-
+String prevSM = "a";
 int LoopTime = 0;
 long loopMarker = 0;
 
@@ -104,14 +104,24 @@ void loop() {
             SensorWDT = 0;
         }
     }
-
+    if(millis() > nextDistLog){
+        Serial1.print("M:"+Mode+"#");
+        Serial1.print("DF:"+String(dist_fwd)+"#");
+        Serial1.print("DB:"+String(dist_back)+"#");
+        Serial1.print("DL:"+String(dist_left)+"#");
+        Serial1.print("DR:"+String(dist_right)+"#");
+        nextDistLog = millis() + 1000;
+    }
     motorMULT = 16;
     if(Mode == "IDLE"){
         motorFWD = 0;
         motorROT = 0;
         motorSIDE = 0;
     }else if(Mode == "AUTO"){
-        Serial1.println(submode);
+        if(!submode.equals(prevSM)){
+            Serial1.print("SM:"+submode+"#");
+        }
+        prevSM = submode;
         if(submode.equals("startup")){
             motorFWD = 0;
             motorROT = 0;
@@ -339,6 +349,7 @@ boolean setMotorSpeeds(){
     data[1] = motorSIDE+127;
     data[2] = motorROT+127;
     data[3] = motorMULT;
+    //Serial1.print("LR:setMotors#");
     Wire.beginTransmission(0x01);
     Wire.write(data,4);
     Wire.endTransmission();
@@ -357,7 +368,8 @@ boolean setFreeMap(boolean in[4]){
 
 
 boolean getSensorVals(){
-    Wire.requestFrom(0x02, 4);
+    Wire.requestFrom(2, 4);
+    //Serial1.print("LR:pingedForSensors#");
     dist_fwd = Wire.read();
     dist_back = Wire.read();
     dist_left = Wire.read();
@@ -380,9 +392,11 @@ boolean equals(String a, String b){ //IT IS I ; MEGAMIND; AND I AM TOO LAZY TO F
 void HandleSerialIn(String Message){
     int whyudick = Message.length();
     Message[whyudick-1] = '\0';
-    Serial1.println(Message);
+    Serial1.println("LR:"+Message+"#");
     Serial.println(Message);
     Mode = Message;
+    submode = "startup";
+    prevSM = "a";
 }
 /*
 void HandleSerialIn(char[] Message){
