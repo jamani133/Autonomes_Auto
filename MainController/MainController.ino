@@ -276,8 +276,10 @@ void loop() {
                     n++;
                 }
                 if(!n == 0){
-                    submode = allowed[random(n-1)];
+                    
+                    submode = allowed[random(n)];
                     start = millis();
+                    Serial1.print("LR:"+String(allowed[0])+String(allowed[1])+String(allowed[2])+String(allowed[3])+"#");
                 }
                 getSensorVals();
             }
@@ -288,9 +290,9 @@ void loop() {
            pixels.setPixelColor(2,pixels.Color(0,255,0));
            pixels.setPixelColor(3,pixels.Color(0,255,0));
         }else if(submode.equals("left_rot")){
-            if(start+1000 < millis()){
+            if(start+1500 > millis()){
                 motorFWD = 0;
-                motorROT = -32;
+                motorROT = -64;
                 motorSIDE = 0;
             }else{
                 motorFWD = 0;
@@ -303,9 +305,9 @@ void loop() {
            pixels.setPixelColor(2,pixels.Color(255,255,0));
            pixels.setPixelColor(3,pixels.Color(0,0,0));
         }else if(submode.equals("right_rot")){
-            if(start+1000 < millis()){
+            if(start+1500 > millis()){
                 motorFWD = 0;
-                motorROT = 32;
+                motorROT = 64;
                 motorSIDE = 0;
             }else{
                 motorFWD = 0;
