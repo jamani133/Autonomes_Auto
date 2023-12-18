@@ -368,10 +368,10 @@ void loop() {
             motorSIDE = 0;
         }
     }else if(Mode == "RAMPAGE1"){
-        motorFWD = 0;
+        motorFWD = 127;
         motorMULT = 255;
         motorROT = 127; //FIDGET SPINNERRRRRRRR
-        motorSIDE = 0;
+        motorSIDE = 127;
     }else if(Mode == "RAMPAGE2"){
         motorFWD = 0;
         motorMULT = 127;   //why
@@ -426,7 +426,7 @@ void loop() {
     }else if(Mode == "rleft"){
         motorFWD = 0;
         motorMULT = 255;
-        motorROT = -127;
+        motorROT = -32;
         motorSIDE = 0;
         pixels.setPixelColor(0,pixels.Color(0,0,0));
         pixels.setPixelColor(1,pixels.Color(255,255,0));
@@ -435,7 +435,27 @@ void loop() {
     }else if(Mode == "rright"){
         motorFWD = 0;
         motorMULT = 255;
-        motorROT = 255;
+        motorROT = 32;
+        motorSIDE = 0;
+        pixels.setPixelColor(0,pixels.Color(255,255,0));
+        pixels.setPixelColor(1,pixels.Color(0,0,0));
+        pixels.setPixelColor(2,pixels.Color(0,0,0));
+        pixels.setPixelColor(3,pixels.Color(0,0,0));
+    }
+    else if(Mode == "rrright"){
+        motorFWD = 0;
+        motorMULT = 255;
+        motorROT = 127;
+        motorSIDE = 0;
+        pixels.setPixelColor(0,pixels.Color(255,255,0));
+        pixels.setPixelColor(1,pixels.Color(0,0,0));
+        pixels.setPixelColor(2,pixels.Color(0,0,0));
+        pixels.setPixelColor(3,pixels.Color(0,0,0));
+    }
+    else if(Mode == "rrleft"){
+        motorFWD = 0;
+        motorMULT = 255;
+        motorROT = -127;
         motorSIDE = 0;
         pixels.setPixelColor(0,pixels.Color(255,255,0));
         pixels.setPixelColor(1,pixels.Color(0,0,0));
@@ -512,7 +532,7 @@ boolean equals(String a, String b){ //IT IS I ; MEGAMIND; AND I AM TOO LAZY TO F
 //4 : states
 
 void HandleSerialIn(String Message){
-    if(Message.equals("DRIFT")){
+    if(Message.equals("DRIFT\n")){
         Serial1.println("LR:"+Message+"#");
         Serial.println(Message);
         Mode = "AUTO";   //this is not good, but no language on earth has a word for how little i care, a quantum supercomuter calculating for a thousand years could not even aproach the number of fucks i do not give

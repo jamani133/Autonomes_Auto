@@ -73,6 +73,12 @@ void draw(){
         if(key == 'a'){
             setDir("rleft");
         }
+        if(key == 'y'){
+            setDir("rrleft");
+        }
+        if(key == 'c'){
+            setDir("rrright");
+        }
         if(key == 's'){
             setDir("back");
         }
