@@ -27,7 +27,7 @@ void draw(){
     
     textSize(30);
     fill(255,160,0);
-    text("Dashboard V1.4\n---------------------",30,60);
+    text("Dashboard V1.5\n---------------------",30,60);
 
     textSize(20);
     fill(0,255,0);
@@ -78,6 +78,8 @@ void draw(){
         }
         if(key == 'd'){
             setDir("rright");
+        }if(key == 'o'){
+            setDir("DRIFT");
         }
         if(key == 'e'){
             setDir("right");

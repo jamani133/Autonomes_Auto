@@ -10,7 +10,7 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(4, 12, NEO_GRB + NEO_KHZ800);
 boolean freeMap[4] = {false,false,false,false};
 const boolean FREE[4] = {true,true,true,true};
 const boolean SAD[4] = {true,true,true,true};
-
+boolean drift = false;
 int SensorWDT = 0;
 int MotorWDT = 0;
 int TelemWDT = 0;
@@ -80,7 +80,7 @@ void setup() {
   Wire.begin();
   Serial.begin(115200);
   Serial1.begin(115200);
-
+ Serial1.setTimeout(100);
 
   loopMarker = millis();
 }
@@ -151,6 +151,7 @@ void loop() {
     }
             if(freeMap == SAD){
                 submode = "sad";
+                motorMULT = 0;
             }else{
                 submode = "check";
                 start = millis();
@@ -158,6 +159,9 @@ void loop() {
             }
             delay(100);
         }else if(submode.equals("forward")){
+            if(dist_fwd < 40){
+            motorMULT = motorMULT/2;
+            }
            if(dist_fwd > 20){
                 motorFWD = 127;
                 motorROT = 0;
@@ -175,6 +179,9 @@ void loop() {
            pixels.setPixelColor(2,pixels.Color(64,0,0));
            pixels.setPixelColor(3,pixels.Color(64,0,0));
         }else if(submode.equals("backup")){
+            if(dist_back < 40){
+            motorMULT = motorMULT/2;
+            }
            if(dist_back > 20){
                 motorFWD = -127;
                 motorROT = 0;
@@ -187,15 +194,25 @@ void loop() {
                 start = millis();
                 setFreeMap(FREE);
            }
+           if(dist_left > 50 && drift){
+             if(random(10000) < 2){
+                submode = "drift_left";
+             }
+           }
+           if(dist_right > 50 && drift){
+             if(random(10000) < 2){
+                submode = "drift_right";
+             }
+           }
            pixels.setPixelColor(0,pixels.Color(0,0,0));
            pixels.setPixelColor(1,pixels.Color(0,0,0));
            pixels.setPixelColor(2,pixels.Color(255,0,0));
            pixels.setPixelColor(3,pixels.Color(255,0,0));
-        }else if(submode.equals("left")){
-            if(dist_left > 20){
+        }else if(submode.equals("drift_right")){
+            if(dist_right > 20){
                 motorFWD = 0;
                 motorROT = 0;
-                motorSIDE = -127;
+                motorSIDE = 127;
            }else{
                 motorFWD = 0;
                 motorROT = 0;
@@ -204,11 +221,11 @@ void loop() {
                 start = millis();
                 setFreeMap(FREE);
            }
-        }else if(submode.equals("right")){
-            if(dist_fwd > 20){
+        }else if(submode.equals("drift_left")){
+            if(dist_left > 20){
                 motorFWD = 0;
                 motorROT = 0;
-                motorSIDE = 127;
+                motorSIDE = -127;
            }else{
                 motorFWD = 0;
                 motorROT = 0;
@@ -254,7 +271,7 @@ void loop() {
                 
             }else if(millis()<start+(rotTime*5)){
             submode = "sad";
-            Serial1.print("LR:"+String(freeMap[0])+String(freeMap[1])+String(freeMap[2])+String(freeMap[3])+"#");
+            //Serial1.print("LR:"+String(freeMap[0])+String(freeMap[1])+String(freeMap[2])+String(freeMap[3])+"#");
             if(freeMap[0]){
                 submode = "forward";
             }else{
@@ -276,10 +293,12 @@ void loop() {
                     n++;
                 }
                 if(!n == 0){
+                    int index = random(0,n);
+                    submode = allowed[index];
                     
-                    submode = allowed[random(n)];
+
                     start = millis();
-                    Serial1.print("LR:"+String(allowed[0])+String(allowed[1])+String(allowed[2])+String(allowed[3])+"#");
+                    Serial1.print("LR:"+String(allowed[0])+String(allowed[1])+String(allowed[2])+String(allowed[3])+":"+String(String(index))+"#");
                 }
                 getSensorVals();
             }
@@ -493,6 +512,16 @@ boolean equals(String a, String b){ //IT IS I ; MEGAMIND; AND I AM TOO LAZY TO F
 //4 : states
 
 void HandleSerialIn(String Message){
+    if(Message.equals("DRIFT")){
+        Serial1.println("LR:"+Message+"#");
+        Serial.println(Message);
+        Mode = "AUTO";   //this is not good, but no language on earth has a word for how little i care, a quantum supercomuter calculating for a thousand years could not even aproach the number of fucks i do not give
+        submode = "startup";
+        prevSM = "a";
+        drift = true;
+        return;
+    }
+    drift = false;
     int whyudick = Message.length();
     Message[whyudick-1] = '\0';
     Serial1.println("LR:"+Message+"#");
