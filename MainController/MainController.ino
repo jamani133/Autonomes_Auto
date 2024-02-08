@@ -368,10 +368,12 @@ void loop() {
             motorSIDE = 0;
         }
     }else if(Mode == "RAMPAGE1"){
-        motorFWD = 127;
-        motorMULT = 255;
-        motorROT = 127; //FIDGET SPINNERRRRRRRR
-        motorSIDE = 127;
+        if(random(1,1000) < 2 ){
+            motorFWD = map(random(-2,2),-2,2,-127,127);
+            motorMULT = 255;
+            motorROT = map(random(-2,2),-2,2,-127,127); //what
+            motorSIDE = map(random(-2,2),-2,2,-127,127);
+        }
     }else if(Mode == "RAMPAGE2"){
         motorFWD = 0;
         motorMULT = 127;   //why
