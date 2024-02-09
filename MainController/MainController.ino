@@ -368,7 +368,7 @@ void loop() {
             motorSIDE = 0;
         }
     }else if(Mode == "RAMPAGE1"){
-        if(random(1,1000) < 2 ){
+        if(random(1,10000) < 2 ){
             motorFWD = map(random(-2,2),-2,2,-127,127);
             motorMULT = 255;
             motorROT = map(random(-2,2),-2,2,-127,127); //what
@@ -403,7 +403,7 @@ void loop() {
         motorMULT = 255;
         motorROT = 0;
         motorSIDE = -127;
-        pixels.setPixelColor(0,pixels.Color(0,0,0));
+        pixels.setPixelColor(0,pixels.Color(0,0,0));xx
         pixels.setPixelColor(1,pixels.Color(255,0,0));
         pixels.setPixelColor(2,pixels.Color(255,0,0));
         pixels.setPixelColor(3,pixels.Color(0,0,0));
