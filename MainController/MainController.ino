@@ -403,7 +403,7 @@ void loop() {
         motorMULT = 255;
         motorROT = 0;
         motorSIDE = -127;
-        pixels.setPixelColor(0,pixels.Color(0,0,0));xx
+        pixels.setPixelColor(0,pixels.Color(0,0,0));
         pixels.setPixelColor(1,pixels.Color(255,0,0));
         pixels.setPixelColor(2,pixels.Color(255,0,0));
         pixels.setPixelColor(3,pixels.Color(0,0,0));
